@@ -24,7 +24,7 @@ dirname /usr/include/qt/qml.hpp
 
 Exibe campos de um texto separados por um delimitador
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-f` informa o número ou faixa do campo
 - `-f2` campo 2
@@ -50,7 +50,7 @@ Exibe as primeiras linhas de um arquivo (por padrão 10)
 
 Também é possível exibir a nível de bytes (usando `-c`)
 
-**Dicas de opções:**
+**Opções úteis:**
 
 **Com o - em números descarta os últimos**
 
@@ -69,7 +69,7 @@ Também é possível exibir a nível de bytes (usando a opção `-c`)
 
 É muito comum para visualizar em tempo real o log de programas com `tail -f`
 
-**Dicas de opções:**
+**Opções úteis:**
 
 **Com o + em números descarta as primeiras N-1 linhas**
 
@@ -110,7 +110,7 @@ seq -s' ' -2 .1 2
 
 Ordena um conjunto de linhas usando diversos critérios de comparação (numérico, alfabético, meses, randomicamente). O padrão é alfabético e crescente.
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-f` desativa a diferenciação entre maiúsculas e minúsculas
 - `-n` comparação numérica
@@ -168,7 +168,7 @@ FIM
 
 Seleciona os valores únicos de um conjunto de linhas
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-c` conta ocorrências de cada valor único
 - `-i` não diferencia maiúsculas de minúsculas
@@ -190,7 +190,7 @@ echo {1,5,10} {1,5,10} {1,5,10} 8 | tr ' ' '\n' | sort -n | uniq
 
 Seleciona linhas de forma randômica da entrada
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-n` selecione no máximo a quantidade especificada
 - `-e` a entrada será uma string (use ***here-string*** `<<<` no bash)
@@ -208,7 +208,7 @@ seq 0 .05 1 | shuf -n5
 
 Exibe a data e hora atuais do sistema em formato local e padrão ou personalizado
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `+''` define um formato. Note as aspas simples que não pertencem ao comando mas evitam o shell interpretar termos do formato (que usam o prefixo %)
 - `-d''` transforma do formato ***unix timestap*** em hora e data locais. É necessário prefixar o timestamp com @ como em '@129034'.
@@ -260,7 +260,7 @@ Junta linhas de dois arquivos nas quais existem campos em comum. Por padrão uti
       17 ping firefox Ubuntu
     ```
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-t` define um separador alternativo
 - `-j` define a coluna de comparação, ou seja o campo de junção (iguais nos dois arquivos)
@@ -272,7 +272,7 @@ Junta linhas de dois arquivos nas quais existem campos em comum. Por padrão uti
 
 Mescla dois arquivos, linha por linha, em um único sem haver nenhuma comparação.
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-d` define o delimitador
 
@@ -387,7 +387,7 @@ test 2 -ne 2; echo $?
 
 Concatena um ou mais arquivos e mostra na saída
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-n` mostra o número da linha
 - `-E` mostra $ no fim de cada linha
@@ -464,7 +464,7 @@ for n in $(LC_NUMERIC=en_US seq 1 .05 10); do echo "scale=5;sqrt($n)" | bc; done
 
 Transforma a entrada substituindo caracteres de um alfabeto por um outro
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-c` utiliza ao invés, o complementar do primeiro alfabeto
 - `-d` deleta caracteres do primeiro alfabeto
@@ -494,7 +494,7 @@ echo era uma vez três porquinhos | tr aeiou 12345
 
 Informa o número de bytes, caracteres, palavras, linhas ou a largura máxima do arquivo
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-c` conta bytes
 - `-m` conta caracteres
@@ -506,7 +506,7 @@ Informa o número de bytes, caracteres, palavras, linhas ou a largura máxima do
 
 Ecoa na tela conteúdo de cadeias e gera uma nova linha
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-e` permite usar caracteres de controle como \n ou \x
 - `-n` não gera uma nova linha
@@ -523,7 +523,7 @@ Mostra o diretório atual
 
 Realiza um dump dos bytes do arquivo em várias bases, que por padrão é octal
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-A` define a base numérica dos endereços: d (decimal), x (hexadecimal), o (octal) ou n (não exibe ela!)
 - `-t` define a representação de cada byte: a (caracteres como apresentados no ASCII), b (octal), c (como a, \n, \t, ã), (f) reais, x (hexa)
@@ -546,17 +546,71 @@ head -c10 /dev/random | od -Ax -tx1z
 printf "\x$(bc <<< "obase=G;97 + $(head -c1 /dev/random | od -An -td | tr -d ' ') % 27")\n"
 ```
 
-
-
-### ps
-
 ### ls
+
+Lista o conteúdo de diretórios
+
+Por padrão a listagem é em ordem alfabética
+
+**Opções úteis:**
+
+- `-a` mostra arquivos ocultos
+- `-A` não mostra os diretórios `.` e `..`
+- `-B` não mostra os arquivos de backups (sufixo ~)
+- `-C` formato de colunas (padrão)
+- `-d` lista o diretório em si, não o conteúdo
+- `-m` formato de vírgulas (útil em script)
+- `--group-directories-first` mostra diretórios primeiro
+- `-I {pattern}` esconde arquivos que casam com pattern (usando curingas do shell)
+- `-H` segue os links simbólicos
+- `-i` mostra o inode do arquivo
+- `-l` formato de lista
+- `-g` não mostra o dono
+- `-o` não mostra grupo
+- `-r` ordem reversa
+- `-R` lista o diretório corrente e todos seus subdiretórios
+- `-s` mostra o tamanho do arquivo
+- `-S` ordena pelo tamanho (maior primeiro)
+- `-t` ordena pelo horário de modificação (mais recente primeiro)
+- `-u` ordena pelo horário de acesso (mais recente primeiro)
+- `-x` ordena pela extensão
+- `-1` lista um arquivo por linha
+- `--time={type}` ordena por horário ou modifica a ordenação por tempo usado em `--sort=time`: `atime`, `access`, `use`, `ctime`, `status`, `birth` ou `creation`
+- `--sort={type}` ordena por tamanho `size`, horário `time`, versão `version`, extensão `extension` ou não ordena `none`
+- `--color=never|auto|always` habilita ou desabilita cores
+
+Em script é interessante ver o retorno 0 - sucesso, 1 - falha simples, 2 - falha séria.
 
 ### cp
 
+Copia arquivos (e também diretórios)
+
+**Opções úteis:**
+
+- `-a` preserva atributos do arquivos (como modo, dono, horários)
+- `-b` faz o backup se o destino estiver para ser sobrescrito
+- `-f` se existir no destino, sobrescreva
+- `-i` habilite modo windows, pergunte antes
+- `-r` em diretórios, também copia todos seus subdiretórios
+- `-u` só copia se a origem for mais nova ou caso não exista no destino
+- `-v` modo verboso, útil em depuração
+- `-S {ch}` informa o sufixo do backup, padrão é ~
+
 ### mv
 
+Movimenta ou renomeia arquivos
+
+**Opções úteis:**
+
+- `-b` faz o backup se o destino estiver para ser sobrescrito
+- `-f` se existir no destino, sobrescreva
+- `-i` habilite modo windows, pergunte antes
+- `-u` só copia se a origem for mais nova ou caso não exista no destino
+- `-v` modo verboso, útil em depuração
+
 ### mkdir
+
+### ps
 
 ### kill
 
@@ -580,7 +634,7 @@ printf "\x$(bc <<< "obase=G;97 + $(head -c1 /dev/random | od -An -td | tr -d ' '
 
 Toca no arquivo modificando o `atime` (*access time*) e o `mtime` (*modification time*), ou apenas um deles. Se o arquivo não existir cria um novo vazio.
 
-**Dicas de opções:**
+**Opções úteis:**
 
 - `-a` modifica apenas o *atime*
 - `-m` modifica apenas o *mtime*
