@@ -546,6 +546,33 @@ head -c10 /dev/random | od -Ax -tx1z
 printf "\x$(bc <<< "obase=G;97 + $(head -c1 /dev/random | od -An -td | tr -d ' ') % 27")\n"
 ```
 
+### tee
+
+Lê a stdin e ecoa na stdout e em arquivos ao mesmo tempo
+
+**Opções úteis:**
+
+- `-a` anexa conteúdo no final
+
+**Exemplos:**
+
+```bash
+# leia a entrada padrão e cuspa na saída padrão assim como nos arquivos, zerando primeiro
+tee file1.txt file2.txt
+# leia a entrada padrão e cuspa na saída padrão assim como nos arquivos, anexando ao final
+tee -a file1.txt
+```
+
+### tac
+
+Faz o que cat faz, porém concatena os arquivos a partir da última linha até a primeira (reversamente)
+
+**Exemplos:**
+
+```bash
+tac | sort
+```
+
 ### ls
 
 Lista o conteúdo de diretórios
