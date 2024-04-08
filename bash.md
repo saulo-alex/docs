@@ -610,6 +610,23 @@ Movimenta ou renomeia arquivos
 
 ### mkdir
 
+Cria diretórios
+
+**Opções úteis:**
+
+- `-m` define o modo do diretório
+- `-p` se houver algum diretório não existente no caminho, cria-os
+- `-v` modo verboso, útil em depuração
+
+**Exemplos:**
+
+```bash
+# se a ou b não existir falha
+mkdir /tmp/a/b/c
+# sempre cria a árvore completa de diretórios
+mkdir -p /tmp/a/b/c
+```
+
 ### ps
 
 ### kill
