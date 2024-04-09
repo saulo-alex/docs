@@ -606,7 +606,7 @@ Por padrão a listagem é em ordem alfabética
 - `--sort={type}` ordena por tamanho `size`, horário `time`, versão `version`, extensão `extension` ou não ordena `none`
 - `--color=never|auto|always` habilita ou desabilita cores
 
-Em script é interessante ver o retorno 0 - sucesso, 1 - falha simples, 2 - falha séria.
+> Em script é interessante ver o retorno `0` - sucesso, `1` - falha simples, `2` - falha séria.
 
 **Dica de ouro:** Na primeira coluna do formato detalhado, há informações de tipo de arquivo e suas permissões. Da esquerda para direita os próximos 10 caracteres tem o seguinte significado:
 
