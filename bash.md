@@ -614,7 +614,7 @@ Em script é interessante ver o retorno 0 - sucesso, 1 - falha simples, 2 - falh
 - *permissões do **grupo*** (os três próximos caracteres): `r` leitura, `w` escrita e `x` execução
 - *permissões dos **outros*** (os três próximos caracteres): `r` leitura, `w` escrita e `x` execução
 
-> Se não houver a letra informada no segmento da permissão, então ela não é concebida!
+> Se houver um `-` em algum caractere no segmento da permissão, então ela não é concebida!
 
 > No terceiro caractere dos segmento das permissões, pode haver além de `x` (execução) ou `-` (sem persmissão de execução) os seguintes caracteres: `s` indica que o *set-user-id* ou *set-group-id* estão setados e há permissão de execução, `S` indica que o *set-user-id* ou *set-group-id* estão setados mas não há permissão de execução, `t` o *sticky-bit* (também conhecido como *deletion flag*) está setado e há permissão de execução, `T` o *sticky-bit* está setado mas não há permissão de execução.
 
