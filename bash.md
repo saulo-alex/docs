@@ -597,9 +597,10 @@ Por padrão a listagem é em ordem alfabética
 - `-d` lista o diretório em si, não o conteúdo
 - `-H` segue o link simbólico quando o é informado especificamente (por padrão não segue)
 - `-r` ordem reversa
-- `-S` ordena pelo tamanho (maior primeiro)
-- `-t` ordena pelo horário de modificação (mais recente primeiro)
-- `-u` ordena pelo horário de acesso (mais recente primeiro)
+- `-c` ordena pela momento a qual o metadado foi modificado (últimas modificações primeiro) - ou *ctime*
+- `-t` ordena pelo momento a qual o conteúdo foi modificado (últimas modificações primeiro) - ou *mtime*
+- `-u` ordena pelo momento de acesso (últimos acessados primeiro) - ou *atime*
+- `-S` ordena pelo tamanho (maiores primeiro)
 - `-X` ordena pela extensão
 - `--time={type}` especifica qual o tempo utilizado em formato de lista detalhada: `atime` (ou `access`, `use`), `ctime` (ou `status`), `mtime` (ou `modification`), `birth` (ou `creation`)
 - `--sort={type}` ordena por tamanho `size`, horário `time`, versão `version`, extensão `extension` ou não ordena `none`
@@ -617,6 +618,8 @@ Em script é interessante ver o retorno 0 - sucesso, 1 - falha simples, 2 - falh
 > Se houver um `-` em algum caractere no segmento da permissão, então ela não é concebida!
 
 > No terceiro caractere dos segmento das permissões, pode haver além de `x` (execução) ou `-` (sem persmissão de execução) os seguintes caracteres: `s` indica que o *set-user-id* ou *set-group-id* estão setados e há permissão de execução, `S` indica que o *set-user-id* ou *set-group-id* estão setados mas não há permissão de execução, `t` o *sticky-bit* (também conhecido como *deletion flag*) está setado e há permissão de execução, `T` o *sticky-bit* está setado mas não há permissão de execução.
+
+> `atime`, `ctime` e `mtime` representam os três registros de tempo presentes em qualquer metadado de arquivo no Linux. Sendo `atime` o *access time* ou seja, representa o momento em que o arquivo foi acessado pela última vez. Já o `ctime` é o *change time* que representa o último momento em que algum metadado do arquivo foi modificado. Por último o `mtime` que é o *modified time* a qual indica o momento a qual o conteúdo do arquivo foi modificado pela última vez. Por padrão o `ls` utiliza o `mtime`. Para visualizar todos os momentos citados também é possível usar o comando `stat`.
 
 **Exemplos:**
 
