@@ -725,6 +725,49 @@ No mundo Unix por padrão é utilizado o `man` para visualizar manuais, o que po
 
 ### ps
 
+Mostra informações de processos
+
+**Algumas colunas e seus significados:**
+
+- `UID` usuário que iniciou o processo
+- `PID` número de processo
+- `PPID` número de processo pai
+- `STIME` hora que começou a executar
+- `TIME` tempo de CPU utilizado
+- `C` porcentagem de utilização da CPU (valor inteiro)
+- `TTY` interface de terminal utilizada - se real (`tty`), se emulado (`pts`)
+- `CMD` linha de comando
+- `SZ` número de páginas ocupadas fisicamente - inclue áreas .text, .data e .stack
+- `RSS` área de memória que ainda não foi trocada via swap
+- `PSR` qual o core de processador utilizado
+- `NLWP` número de threads em execução
+- `LWP` número de identificação da thread
+- `NI` número de *nice* que permite ajustar a nível de usuário a prioridade do processo (valor entre -20 e 19; quanto menor mais prioritário se torna o processo)
+- `PRI` número de prioridade (varia entre 0 (mais prioritário) a 139 (menos prioritário), onde 0 a 99 são processos *real-time* enquanto 100 a 139 são processos normais). O ajuste de prioridade é calculado por `PRI = NI + 20`.
+
+**Opções úteis:**
+
+##### Seleção
+
+- `-e` ou `-A` seleciona todos os processos de todos os usuários
+- `-p {pid}` seleciona apenas os que possuem PID informados (mais de um, separados por vírgula)
+- `-C {term}` seleciona apenas os que casam o termo informado em seu CMD
+- `--ppid {pid}` seleciona apenas o que possuem PPID informados (mais de um, separados por vírgulas)
+- `-t {tty}` seleciona apenas os que possuem o mesmo número de TTY informados (mais de um, separados por vírgulas)
+- `-u {uid|name}` seleciona apenas os que possuem UID ou nome de usuário informados (mais de um, separados por vírgulas)
+
+##### Formatação
+
+- `-f` exibe informações detalhadas
+- `-F` exibe o máximo (padrão) de informações detalhadas. Pode ser combinado com `-L` que mostra o número de threads e os identificadores delas
+- `-j` exibe os processos daquele shell (similar ao `ps` sem argumento)
+- `-ly` exibe informações detalhadas com adição do estado do processo, prioridade, qual função de kernel que mantém o processo dormindo, número de *nice*.
+
+##### Modificadores de saída
+
+
+##### Formatação de threads
+
 ### kill
 
 ### find
