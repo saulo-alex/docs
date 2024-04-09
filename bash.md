@@ -602,7 +602,7 @@ Por padrão a listagem é em ordem alfabética
 - `-u` ordena pelo momento de acesso (últimos acessados primeiro) - ou *atime*
 - `-S` ordena pelo tamanho (maiores primeiro)
 - `-X` ordena pela extensão
-- `--time={type}` especifica qual o tempo utilizado em formato de lista detalhada: `atime` (ou `access`, `use`), `ctime` (ou `status`), `mtime` (ou `modification`), `birth` (ou `creation`)
+- `--time={type}` especifica qual o momento de tempo utilizado no formato de lista detalhada: `atime` (ou `access`, `use`), `ctime` (ou `status`), `mtime` (ou `modification`), `birth` (ou `creation`)
 - `--sort={type}` ordena por tamanho `size`, horário `time`, versão `version`, extensão `extension` ou não ordena `none`
 - `--color=never|auto|always` habilita ou desabilita cores
 
