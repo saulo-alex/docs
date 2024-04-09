@@ -712,6 +712,7 @@ No mundo Unix por padrão é utilizado o `man` para visualizar manuais, o que po
 - `l` vai ao último nó visualizado
 - `d` vai ao nó geral do info, permitindo visualizar todos os documentos registrados.
 - `u` ou `t` vai ao nó raíz do documento
+- `m` lista os nós possíveis a partir do nó corrente (útil quando está no primeiro nó)
 - `H` mostra um guia das teclas de atalho e comandos
 - `C-v` e `M-v` rola a página inteira para baixo e para cima, respectivamente. `M` significa `alt`
 - `C-a` e `C-e` vai para o início e fim da linha, respectivamente
