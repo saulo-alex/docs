@@ -581,31 +581,77 @@ Por padrão a listagem é em ordem alfabética
 
 **Opções úteis:**
 
-- `-l` formato de lista
+- `-l` formato de lista (detalhado)
+- `-1` formato de lista (simples, só o nome)
 - `-m` formato de vírgulas (útil em script)
 - `-C` formato de colunas (padrão)
-- `-1` formato um por linha
-- `-a` mostra arquivos ocultos
+- `-a` mostra arquivos ocultos (incluíndo os diretórios `.` e `..`)
 - `-R` lista o diretório corrente e todos seus subdiretórios
 - `-I {pattern}` esconde arquivos que casam com pattern (usando curingas do shell)
-- `-A` não mostra os diretórios `.` e `..`
 - `-B` não mostra os arquivos de backups (sufixo ~)
-- `-g` não mostra o dono
-- `-o` não mostra grupo
+- `-g` formata em lista e não mostra o dono
+- `-o` formata em lista e não mostra grupo
 - `-s` mostra o tamanho do arquivo
 - `-i` mostra o inode do arquivo
 - `--group-directories-first` mostra diretórios primeiro
 - `-d` lista o diretório em si, não o conteúdo
+- `-H` segue o link simbólico quando o é informado especificamente (por padrão não segue)
 - `-r` ordem reversa
 - `-S` ordena pelo tamanho (maior primeiro)
 - `-t` ordena pelo horário de modificação (mais recente primeiro)
 - `-u` ordena pelo horário de acesso (mais recente primeiro)
-- `-x` ordena pela extensão
+- `-X` ordena pela extensão
 - `--time={type}` ordena por horário ou modifica a ordenação por tempo usado em `--sort=time`: `atime`, `access`, `use`, `ctime`, `status`, `birth` ou `creation`
 - `--sort={type}` ordena por tamanho `size`, horário `time`, versão `version`, extensão `extension` ou não ordena `none`
 - `--color=never|auto|always` habilita ou desabilita cores
 
 Em script é interessante ver o retorno 0 - sucesso, 1 - falha simples, 2 - falha séria.
+
+**Dica de ouro:** Na primeira coluna do formato detalhado, há informações de tipo de arquivo e suas permissões. Da esquerda para direita os próximos 10 caracteres tem o seguinte significado:
+
+- *tipo do arquivo*: `d` diretório, `-` arquivo comum, `c` arquivo de caractere, `b` arquivo de bloco, `l` link simbólico, `p` pipe, `s` socket
+- *permissões do **dono*** (os três próximos caracteres): `r` leitura, `w` escrita e `x` execução
+- *permissões do **grupo*** (os três próximos caracteres): `r` leitura, `w` escrita e `x` execução
+- *permissões dos **outros*** (os três próximos caracteres): `r` leitura, `w` escrita e `x` execução
+
+> Se não houver a letra informada no segmento da permissão, então ela não é concebida!
+
+> No terceiro caractere dos segmento das permissões, pode haver além de `x` (execução) ou `-` (sem persmissão de execução) os seguintes caracteres: `s` indica que o *set-user-id* ou *set-group-id* estão setados e há permissão de execução, `S` indica que o *set-user-id* ou *set-group-id* estão setados mas não há permissão de execução, `t` o *sticky-bit* (também conhecido como *deletion flag*) está setado e há permissão de execução, `T` o *sticky-bit* está setado mas não há permissão de execução.
+
+**Exemplos:**
+
+```bash
+# lista o conteúdo do diretório . (atual) de forma detalhada e formata os números de uma forma mais legível (usando múltiplos K, M, G, T)
+ls -lh
+# lista o conteúdo de . de forma simples para ser usados em script
+for f in $(ls -1); do
+    echo "$f"
+done
+# lista o conteúdo do diretório . em formato de colunas
+ls 
+# lista de forma detalhada . ocultando o dono e o grupo
+ls -log
+# lista de forma detalhada . e ordenada pelo tamanho (maior primeiro)
+ls -lS
+# lista de forma detalhada . e em ordem crescente de tamanho
+ls -lSr
+# lista de forma detalhada . e ordenada pela extensão
+ls -lX
+# lista de forma detalhada . e ordenada pelo último acesso
+ls -lu
+# lista de forma detalhada . e ordenada pelo último acesso
+ls -l --time=ctime
+# supondo que o caminho seja um link simbólico, informa para onde ele está apontando
+ls -l Vídeos
+# supondo o mesmo, informa o conteúdo apontado pelo link (ou seja, segue ele)
+ls -lH Vídeos
+# lista detalhadamente . e esconde os de extensão c, cpp, h e seus backups (sufixo ~)
+ls -lGI'*.c' -I'*.cpp' -I'*.h'
+# lista informação detalhada do diretório . e não mais do seu conteúdo
+ls -a
+# lista os últimos 10 arquivos (incluindo ocultos) de . recentemente modificados
+ls -at | head -n10
+```
 
 ### cp
 
