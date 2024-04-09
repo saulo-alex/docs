@@ -581,27 +581,26 @@ Por padrão a listagem é em ordem alfabética
 
 **Opções úteis:**
 
+- `-l` formato de lista
+- `-m` formato de vírgulas (útil em script)
+- `-C` formato de colunas (padrão)
+- `-1` formato um por linha
 - `-a` mostra arquivos ocultos
+- `-R` lista o diretório corrente e todos seus subdiretórios
+- `-I {pattern}` esconde arquivos que casam com pattern (usando curingas do shell)
 - `-A` não mostra os diretórios `.` e `..`
 - `-B` não mostra os arquivos de backups (sufixo ~)
-- `-C` formato de colunas (padrão)
-- `-d` lista o diretório em si, não o conteúdo
-- `-m` formato de vírgulas (útil em script)
-- `--group-directories-first` mostra diretórios primeiro
-- `-I {pattern}` esconde arquivos que casam com pattern (usando curingas do shell)
-- `-H` segue os links simbólicos
-- `-i` mostra o inode do arquivo
-- `-l` formato de lista
 - `-g` não mostra o dono
 - `-o` não mostra grupo
-- `-r` ordem reversa
-- `-R` lista o diretório corrente e todos seus subdiretórios
 - `-s` mostra o tamanho do arquivo
+- `-i` mostra o inode do arquivo
+- `--group-directories-first` mostra diretórios primeiro
+- `-d` lista o diretório em si, não o conteúdo
+- `-r` ordem reversa
 - `-S` ordena pelo tamanho (maior primeiro)
 - `-t` ordena pelo horário de modificação (mais recente primeiro)
 - `-u` ordena pelo horário de acesso (mais recente primeiro)
 - `-x` ordena pela extensão
-- `-1` lista um arquivo por linha
 - `--time={type}` ordena por horário ou modifica a ordenação por tempo usado em `--sort=time`: `atime`, `access`, `use`, `ctime`, `status`, `birth` ou `creation`
 - `--sort={type}` ordena por tamanho `size`, horário `time`, versão `version`, extensão `extension` ou não ordena `none`
 - `--color=never|auto|always` habilita ou desabilita cores
