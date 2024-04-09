@@ -639,6 +639,8 @@ ls -lSr
 ls -lX
 # lista de forma detalhada . e ordenada pelo último acesso
 ls -lu
+# lista de forma detalhada . e ordem alfabética reversa
+ls -lr
 # lista de forma detalhada . e ordenada pelo último acesso
 ls -l --time=ctime
 # supondo que o caminho seja um link simbólico, informa para onde ele está apontando
