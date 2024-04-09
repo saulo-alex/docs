@@ -528,9 +528,9 @@ Realiza um dump dos bytes do arquivo em várias bases, que por padrão é octal
 - `-A` define a base numérica dos endereços: d (decimal), x (hexadecimal), o (octal) ou n (não exibe ela!)
 - `-t` define a representação de cada byte: a (caracteres como apresentados no ASCII), b (octal), c (como a, \n, \t, ã), (f) reais, x (hexa)
 
->> ✅ É possível definir a largura do byte manualmente usando um sufixo no valor de `-t`, como -tx1 (hexa de 1 byte)
+> ✅ É possível definir a largura do byte manualmente usando um sufixo no valor de `-t`, como -tx1 (hexa de 1 byte)
 
->> ✅ Qualquer tipo com sufixo, último de todos, `z` permite que seja exibido na coluna mais a direita a representação ASCII da linha, como em `-tx1z`
+> ✅ Qualquer tipo com sufixo, último de todos, `z` permite que seja exibido na coluna mais a direita a representação ASCII da linha, como em `-tx1z`
 
 - `-j` define o offset inicial, ou seja, quantos bytes serão deslocados antes de exibir o dump
 - `-N` define a quantidade máxima de bytes a serem lidos
