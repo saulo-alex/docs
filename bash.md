@@ -601,7 +601,7 @@ Por padrão a listagem é em ordem alfabética
 - `-t` ordena pelo horário de modificação (mais recente primeiro)
 - `-u` ordena pelo horário de acesso (mais recente primeiro)
 - `-X` ordena pela extensão
-- `--time={type}` ordena por horário ou modifica a ordenação por tempo usado em `--sort=time`: `atime`, `access`, `use`, `ctime`, `status`, `birth` ou `creation`
+- `--time={type}` especifica qual o tempo utilizado em formato de lista detalhada: `atime` (ou `access`, `use`), `ctime` (ou `status`), `mtime` (ou `modification`), `birth` (ou `creation`)
 - `--sort={type}` ordena por tamanho `size`, horário `time`, versão `version`, extensão `extension` ou não ordena `none`
 - `--color=never|auto|always` habilita ou desabilita cores
 
@@ -700,6 +700,24 @@ mkdir /tmp/a/b/c
 # sempre cria a árvore completa de diretórios
 mkdir -p /tmp/a/b/c
 ```
+
+### info
+
+No mundo Unix por padrão é utilizado o `man` para visualizar manuais, o que por sua vez é herdado pelo mundo Linux. No mundo GNU o padrão é utilizar o `info` que visualiza um formato de arquivo diferente do suportado pelo `man`.
+
+**Atalhos úteis:**
+
+- `n` vai ao nó seguinte
+- `p` vai ao nó anterior
+- `l` vai ao último nó visualizado
+- `d` vai ao nó geral do info, permitindo visualizar todos os documentos registrados.
+- `u` ou `t` vai ao nó raíz do documento
+- `H` mostra um guia das teclas de atalho e comandos
+- `C-v` e `M-v` rola a página inteira para baixo e para cima, respectivamente. `M` significa `alt`
+- `C-a` e `C-e` vai para o início e fim da linha, respectivamente
+- `C-f` e `C-b` vai para o caractere próximo e anterior, respectivamente
+
+**Dica de ouro:** No geral o esquema de teclas é o mesmo do *Emacs*. Setas também funcionam!
 
 ### ps
 
