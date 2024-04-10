@@ -738,23 +738,38 @@ Mostra informações de processos
 
 ### Colunas e significados
 
-- `UID` usuário que iniciou o processo
+- `%CPU` porcentagem de utilização da CPU
+- `%MEM` porcentagem de utilização da memória física
+- `C` porcentagem de utilização da CPU (valor inteiro)
+- `COMMAND` linha de comando completa do processo incluindo argumentos
+- `UID` *id* ou nome de usuário que iniciou o processo
 - `PID` número de processo
 - `PPID` número de processo pai
+- `ELAPSED` tempo decorrido após começar a executar
 - `STIME` hora que começou a executar
-- `TIME` tempo de CPU utilizado
-- `C` porcentagem de utilização da CPU (valor inteiro)
+- `STARTED` data e hora precisa em que começou a executar
+- `EXE` o nome do executável
+- `TIME` tempo de CPU utilizado (cumulativo)
+- `MACHINE` contâiner ou VM associada
 - `TTY` interface de terminal utilizada - se real (`tty`), se emulado (`pts`)
-- `CMD` linha de comando
 - `SZ` número de páginas ocupadas fisicamente - inclue áreas .text, .data e .stack
-- `RSS` área de memória que ainda não foi trocada via swap
-- `PSR` qual o core de processador utilizado
-- `NLWP` número de threads em execução
+- `VSZ` memória virtual (em `KB`)
+- `RSS` memória ocupada em RAM que não foi trocada via *swap* (em `KB`)
+- `USS` memória ocupada em RAM privada que não foi trocada via *swap* (em `KB`)
+- `DRS` memória privada do processo (ou .data)
+- `PSR` qual core do processador ultima vez utilizado
+- `RBYTES` número de bytes lidos do disco
+- `WBYTES` número de bytes escritos do disco
+- `ROPS` número de operações de leitura por I/O
+- `WOPS` número de operações de escrita por I/O
+- `NLWP` número de threads em execução (vêm de *light weight process*)
+- `STACKP` endereço do início da pilha
 - `LWP` número de identificação da thread
 - `NI` número de *nice* que permite ajustar a nível de usuário a prioridade do processo (valor entre -20 e 19; quanto menor mais prioritário se torna o processo)
 - `PRI` número de prioridade (varia entre `0` (mais prioritário) a `139` (menos prioritário), onde `0` a `99` são processos *real-time* enquanto `100` a `139` são processos normais). O valor da prioridade é ajustado seguindo a expressão `PRI = NI + 20`.
+- `F` *flags* associados ao processo
 
-**Dica rápida:** O programa `nice` serve para executar um programa com um *nice* aplicado enquanto que o `renice` serve para ajustar o *nice* de algum programa já em execução.
+**Dica rápida:** O programa `nice` serve para executar um programa com um *nice* aplicado enquanto que o `renice` serve para ajustar o *nice* de algum programa já em execução. Ambos necessitam ser `root` para serem chamados.
 
 ### Opções úteis:
 
@@ -773,11 +788,111 @@ Mostra informações de processos
 - `-F` exibe o máximo (padrão) de informações detalhadas. Pode ser combinado com `-L` que mostra o número de threads e os identificadores delas
 - `-j` exibe os processos daquele shell (similar ao `ps` sem argumento)
 - `-ly` exibe informações detalhadas com adição do estado do processo, prioridade, qual função de kernel que mantém o processo dormindo, número de *nice*.
+- `-o {cols}` exibe apenas as colunas informadas
+- `-O {cols}` exibe as colunas listadas em conjunto com algumas pré-determinadas
+
+**Dica rápida:** Em `-o` ou `-O` é possível definir a largura da coluna usando a sintaxe `col:length`. Também é possível renomear a coluna usando a sintaxe `col=name`, onde `name` é uma *string* sem conter espaços, incluindo dentro de aspas (que não é aceita). Se desejar espaço substitua por `_`. É válido também `col=`, ou seja, a coluna terá seu nome em branco.
 
 #### Modificadores de saída
 
+- `-w` define a largura do terminal (trunca o texto sem maior)
+- `-ww` define largura ilimitada do terminal (continua na próxima linha)
+- `--rows={num}` define a altura do terminal
+- `-H` ou `--forest` mostra hierarquia no formato de árvore
+- `--headers` em listagem que excedem a altura do terminal, lista para cada novamente o cabeçalho
+- `--no-headers` sem cabeçalho
+- `--sort={columns}` ordena conforme as colunas informadas que quando mais de uma são separadas por vírgulas. Um prefixo `-` na coluna inverte a ordem natural, que é crescente para colunas numéricas e lexicográfica para colunas textuais.
 
 #### Formatação de threads
+
+- `-L` exibe *threads*, pode ser útil adicionar `-Olwp,nlwp`
+- `-m` *threads* vêm após seus processos, pode ser útil adicionar `-Olwp,nlwp`
+
+#### Miscelânia
+
+- `L` sem `-` mesmo, uma vez que é opção ao sabor do BSD. Mostra todas as colunas válidas com seus termos para serem fornecidos em `--sort` ou `-O` (ou `-o`).
+
+### Processos e seus estados
+
+O estado de um processo é exibido na coluna `S` ou `STAT`, e pode ser a qualquer momento um dos abaixos:
+
+- `D` dormindo de forma não interrompível, normalmente fazendo I/O
+- `I` *thread* de *kernel* que está em *standby*
+- `R` executando
+- `S` dormindo de forma interrompível, normalmente aguardando algum evento completar
+- `T` parado por sinal de controle de *jobs*, normalmente quando coloca alguma tarefa em *background* no terminal via `C-z`
+- `t` parado por de um depurador durante seu *tracing*
+- `X` morto (não deveria ser visto)
+- `D` defunto ou zumbi (quando ele finaliza mas o seu pai não é notificado apropiadamente; o processo de PID 1 - `/sbin/init` - normalmente é quem encerra processos nesse estado)
+
+### Chaves dos cabeçalhos
+
+São usadas como argumentos do `--sort`, `-o` ou `-O` para selecionar as colunas desejadas na operação. Todas as chaves são mostradas também via `ps L`. Abaixo algumas:
+
+| chave | coluna  |
+| :---: | :----:  |
+| %cpu | %CPU |
+| %mem | %MEM |
+| c | C |
+| cgroup | CGROUP |
+| cmd | CMD |
+| comm | COMMAND |
+| cpuid | CPUID |
+| cputime | TIME |
+| etime | ELAPSED |
+| exe | EXE |
+| f | F |
+| flags | F |
+| gid | GID |
+| longtname | TTY |
+| lstart | STARTED |
+| lwp | LWP |
+| m_drs | DRS |
+| m_size | SIZE |
+| m_trs | TRS |
+| machine | MACHINE |
+| nice | NI |
+| nlwp | NLWP |
+| numa | NUMA |
+| opri | PRI |
+| pcpu | %CPU |
+| pid | PID |
+| ppid | PPID |
+| pri | PRI |
+| psr | PSR |
+| pss | PSS |
+| rbytes | RBYTES |
+| rchars | RCHARS |
+| rops | ROPS |
+| rss | RSS |
+| rsz | RSZ |
+| s | S |
+| sgi_rss | RSS |
+| size | SIZE |
+| stackp | STACKP |
+| start | STARTED |
+| start_time | START |
+| stat | STAT |
+| state | S |
+| stime | STIME |
+| sz | SZ |
+| time | TIME |
+| trs | TRS |
+| trss | TRSS |
+| tsig | PENDING |
+| tty | TT |
+| ucmd | CMD |
+| ucomm | COMMAND |
+| uss | USS |
+| vsize | VSZ |
+| vsz | VSZ |
+| wbytes | WBYTES |
+| wcbytes | WCBYTES |
+| wchan | WCHAN |
+| wchars | WCHARS |
+| wname | WCHAN |
+| wops | WOPS |
+
 
 ## kill
 
