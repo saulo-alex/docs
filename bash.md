@@ -933,3 +933,73 @@ touch -d'2024-01-01 00:00:59' arquivoantigo.txt
 touch -a arquivonovo.txt
 ```
 
+## Curiosidades do Bash
+
+### Redireções
+
+### Pontos gerais
+
+- Um separador de comandos é algum dos caracteres: `\n`, `;`, `||`, `&`, `&&`, `;;`, `;&`, `;;&`, `(`, `)`, `|` ou `|&`.
+- O retorno do último comando é sempre guardado em `$?`.
+- Comandos retornam de `0` (sucesso) a `127` quando executam e encerram sem intervenção externa
+- Comandos que são encerrados por sinais externos retornam `128 + N` onde `N` é o número do sinal
+
+### Tipos de comandos
+
+- Simples: apenas um comando com seus argumentos e opcionalmente redireções.
+- Pipeline: uma sequência de comandos conectados por `|` ou `|&`, na qual a *stdout* do primeiro é redirecionada a *stdin* do segundo, e assim sucessivamente. Usando `|&` a *stderr* também é redirecionada para a *stdout* (ou seja, é um atalho para `2>&1`). O valor de retorno do pipeline é dado pelo último comando. Cada comando no pipeline é executado em subshell (processo separado, que duplica o shell pai, ou original).
+- Lista: uma sequência de pipelines separados separados por `;`, `&` (joga para *background* e executa em subshell), `&&` (*and*, executa o próximo se o primeiro for bem-sucedido) ou `||` (*or*, executa o próximo somente se o primeiro for mal-sucedido) e opcionalmente terminado por `;`, `&` ou `\n`.
+- Composto: segue alguma das estruturas: `(LISTA)`, `{ LISTA; }`, `((EXPR))`, `[[EXPR]]`, `for NOME [ [ in [ PALAVRA ... ] ] ; ] do LISTA ; done`, `for (( EXPR1 ; EXPR2 ; EXPR3 )) ; do LISTA ; done`, `select name [ in PALAVRA ] ; do LISTA ; done`, `case PALAVRA in [ [(] PADRAO [ | PADRAO ] ... ) LISTA ;; ] ... esac`, `if LISTA; then LISTA; [ elif LISTA; then LISTA; ] ... [ else LISTA; ] fi`, `while LISTA-1; do LISTA-2; done` ou `until LISTA-1; do LISTA-2; done`.
+
+```bash
+# comando simples
+ls -R /tmp >/dev/null 2>&1
+# comando em pipeline
+echo 'a;b;c' | cut -d';' -f2-
+```
+
+## if
+
+`if COMANDOS; then COMANDOS; [ elif COMANDOS; then COMANDOS; ]... [ else COMANDOS; ] fi`
+
+### Exemplos:
+
+```bash
+# note o ';' na parte que finaliza o then, é obrigatório em comandos de uma só linha
+if true; then echo sucesso; fi
+# note o ';' do else, também é obrigatório em comandos de uma só linha
+if false; then echo falha; else echo sucesso; fi
+# o mesmo visto anteriormente
+if true; then
+    echo sucesso
+fi
+# o mesmo visto anteriormente
+if false; then
+    echo falha
+else
+    echo sucesso
+fi
+# com elif
+if false; then
+    echo falha de primeira
+elif false; then
+    echo falha de segunda
+elif true; then
+    echo sucesso de terceira
+else
+    echo falha por último
+fi
+```
+
+## case
+
+## for
+
+## while
+
+## until
+
+## declare
+
+## ${var} - expansão de parâmetros
+
