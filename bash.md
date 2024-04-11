@@ -1,6 +1,6 @@
 # Bash: linguagem, comandos e usos
 
-Escrito por saulod2 em Abril de 2024
+Escrito por saulod2 em Abril de 2024 😊
 
 ## basename
 
