@@ -378,7 +378,7 @@ Há duas sintaxes: `test expr` ou `[ expr ]`.
 - `-w file` `file` existe e o usuário tem permissão de escrita
 - `-x file` `file` existe e o usuário tem permissão de execução
 
-**Dica rápida:** Lembre-se que o shell considera `0` (`true`) e `1` (ou qualquer outra coisa, `false`)
+**Dica rápida:** Lembre-se que o shell considera `0` (`true`) e `1` (ou qualquer outra coisa, `false`) e também não precisa prefixar variáveis com `$`.
 
 ### Exemplos:
 
@@ -948,8 +948,45 @@ touch -a arquivonovo.txt
 
 - Simples: apenas um comando com seus argumentos e opcionalmente redireções.
 - Pipeline: uma sequência de comandos conectados por `|` ou `|&`, na qual a *stdout* do primeiro é redirecionada a *stdin* do segundo, e assim sucessivamente. Usando `|&` a *stderr* também é redirecionada para a *stdout* (ou seja, é um atalho para `2>&1`). O valor de retorno do pipeline é dado pelo último comando. Cada comando no pipeline é executado em subshell (processo separado, que duplica o shell pai, ou original).
-- Lista: uma sequência de pipelines separados separados por `;`, `&` (joga para *background* e executa em subshell), `&&` (*and*, executa o próximo se o primeiro for bem-sucedido) ou `||` (*or*, executa o próximo somente se o primeiro for mal-sucedido) e opcionalmente terminado por `;`, `&` ou `\n`.
+- Lista: uma sequência de pipelines separados separados por `;`, `&` (joga para *background* e executa em subshell), `&&` (*and*, executa apenas se o primeiro for bem-sucedido) ou `||` (*or*, executa apenas se o primeiro for mal-sucedido) e opcionalmente terminado por `;`, `&` ou `\n`. O valor de retorno da lista é dado pelo último comando.
 - Composto: segue alguma das estruturas: `(LISTA)`, `{ LISTA; }`, `((EXPR))`, `[[EXPR]]`, `for NOME [ [ in [ PALAVRA ... ] ] ; ] do LISTA ; done`, `for (( EXPR1 ; EXPR2 ; EXPR3 )) ; do LISTA ; done`, `select name [ in PALAVRA ] ; do LISTA ; done`, `case PALAVRA in [ [(] PADRAO [ | PADRAO ] ... ) LISTA ;; ] ... esac`, `if LISTA; then LISTA; [ elif LISTA; then LISTA; ] ... [ else LISTA; ] fi`, `while LISTA-1; do LISTA-2; done` ou `until LISTA-1; do LISTA-2; done`.
+    - `(LISTA)` - é executado em subshell; o último comando da lista dá o valor de retorno
+    - `{ LISTA; }` - conhecido como *comando de grupo*; é executado no shell atual; LISTA deve terminar ou com `;` ou `\n`; o último comando da lista dá o valor de retorno; pode ser aninhado; note que o espaço entre `LISTA;` e as chaves é obrigatório
+    - `((EXPR))` - avalia a expressão no shell atual e retorna `0` se o resultado for diferente de zero e `1` caso contrário; tudo na expressão é tratado como se estivesse entre aspas duplas; não há necessidade de prefixar variáveis com `$`.
+
+        ```
+         Operadores:
+
+         a++ a-- pós incremento
+         -a +a menos unário, mais unário
+         ++a --a pré incremento
+         ! negação lógica
+         ~ negação bit a bit
+         ** exponenciação
+         * / % multiplicação divisão resto
+         + - adição subtração
+         >> << deslocamento à direita bit a bit, deslocamento à esquerda bit a bit
+         <= < >= > comparação
+         == != igualdade, inequidade
+         & operação E bit a bit
+         | operação OU bit a bit
+         ^ operação XOR bit a bit
+         && operação E lógico
+         || operação OU lógico
+         expr1 ? expr2 : expr3 if ternário
+         = atribuição
+         *= /= %= += -= <<= >>= &= ^= |= atribuições compostas
+         expr1, expr2 operador vírgula
+        ```
+
+    - `[[EXPR]]` - avalia a expressão (ou expressões) e retorna o valor exato da avaliação (`0` ou `1`).
+        - Expressões podem ser combinadas usando `&&` e `||`: `[[ 2 < 3 && 3 > 5 || 2 > 0 ]]` retorna `0` uma vez que `||` tem menor precedência que `&&`
+        - É necessário prefixar as variáveis
+        - Pode conter expressões que serão expandidas pelo shell como `COMANDOS`, `$(COMANDOS)`, `~` (ou `~+`, `~-`, `~:`), `<(COMANDOS)`, `>(COMANDOS)`, sendo que as variáveis delas serão tratadas como se estivesse entre aspas duplas
+        - Os operadores `<` e `>` usam o locale para comparar cadeias
+        - O operador `==` e `!=` serve para comparar cadeias tratando como se o operando da direita tivesse o `extglob` habilitado
+        - O operador `=~` verifica se o padrão da direita (usando a sintaxe extendida `grep -E`) casa com a cadeia da esquerda; tem a mesma precedência de `==` e `!=`
+    - Demais comandos tratados mais à frente
 
 ```bash
 # comando simples
