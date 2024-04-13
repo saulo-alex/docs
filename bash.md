@@ -937,6 +937,53 @@ touch -a arquivonovo.txt
 
 ### Redireções
 
+Segue o formato básico `descritor[[&]<|>]caminho-para-arquivo`. Sendo o caractere `>` para escrita e `<` para leitura.
+
+Alguns descritores padronizados: `0` é `stdin` (ou entrada-padrão), `1` é `stdout` (ou saída-padrão) e `2` é `stderr` (ou saída-erro-padrão).
+
+Toda redireção é avaliada antes de executar o comando, da esquerda para direita, importando a ordem na qual são escritos.
+
+#### Formatos
+
+- Redireção de entrada
+
+    `[n]< ARQUIVO`
+
+- Redireção de saída
+
+    `[n]> ARQUIVO`
+
+- Redireção de saída *'apendada'*
+
+    `[n]>> ARQUIVO`
+
+- Redireção da *stdout* e *stderr*
+
+    `&> ARQUIVO` (ou `>& ARQUIVO`, ou também `> ARQUIVO 2>&1`)
+
+- Redireção da *stdout* e *stderr* *'apendada'*
+
+    `&>> ARQUIVO` (ou `>> ARQUIVO 2>&1`)
+
+- *Here-documents*
+
+    ```
+    [n]<<[-] DELIMITADOR
+        TEXTO
+    DELIMITADOR
+    ```
+
+    - Por padrão, dentro do texto as variáveis serão interpoladas
+    - O delimitador pode vir entre aspas simples `'DELIMITADOR'`, dessa forma não haverá interpolação no texto
+    - O delimitador final não pode ser antecedido por nenhum caractere, ou seja, ele deve começar na primeira coluna
+    - Se o delimitador inicial for precedido por `-` então o texto manterá a indentação original
+
+- *Here-strings*
+
+    `[n]<<< TEXTO`
+
+    - O texto sempre conterá o `\n` final
+
 ### Pontos gerais
 
 - Um separador de comandos é algum dos caracteres: `\n`, `;`, `||`, `&`, `&&`, `;;`, `;&`, `;;&`, `(`, `)`, `|` ou `|&`.
