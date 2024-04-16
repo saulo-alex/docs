@@ -967,6 +967,38 @@ kill -KILL $$
 kill -SIGABRT `pidof firefox`
 ```
 
+## read
+
+Lê uma linha e coloca em alguma variável
+
+### Opções úteis:
+
+- `-a {var}` lê múltiplas palavras separadas por espaços (ou o caractere em `$IFS`) e joga no array `var`
+- `-s` não ecoa na tela o conteúdo digitado
+- `{var}` a variável na qual armazenará
+- `-p {texto}` mostre o texto informado como prompt antes de tentar ler
+- `-n {count}` lê até `count` caracteres e retorna imediatamente
+- `-d {char}` o padrão é ler até encontrar um `\n` mas pode ser outro caractere
+
+### Exemplos:
+
+```bash
+# Lê uma linha e coloca em $name
+read -p 'Informe seu nome: ' name
+# Lê sem ecoar e coloca em password
+read -s -p 'Informe sua senha: ' password
+# Lê duas palavras
+read -p 'Informe seus números: ' n1 n2
+# Lê e coloca em array
+read -a numbers 'Informe seus números: '
+```
+
+## chmod
+
+## chown
+
+## passwd
+
 ## find
 
 ## grep
@@ -974,14 +1006,6 @@ kill -SIGABRT `pidof firefox`
 ## sed
 
 ## awk
-
-## read
-
-## chmod
-
-## chown
-
-## passwd
 
 ## touch
 
