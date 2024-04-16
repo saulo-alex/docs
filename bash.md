@@ -910,7 +910,7 @@ São usadas como argumentos do `--sort`, `-o` ou `-O` para selecionar as colunas
 
 ## du
 
-Estima o uso de espaço do diretório
+Estima o uso de espaço do diretório (aparentemente o nome vem de *disk usage*)
 
 ### Opções úteis:
 
@@ -924,8 +924,6 @@ Estima o uso de espaço do diretório
 ## kill
 
 Envia sinais para processos, sendo o padrão `SIGTERM` se não especificado
-
-### Opções úteis:
 
 ### Lista do sinais:
 
@@ -951,6 +949,8 @@ Envia sinais para processos, sendo o padrão `SIGTERM` se não especificado
 
 **Dica rápida:** Os sinais mais comuns são SIGINT(2), SIGQUIT(3), SIGABRT(6), SIGKILL(9), SIGALRM(14) e SIGTERM(15)
 
+### Opções úteis:
+
 - `-{SIGNAL}` envia o sinal informado
 - `{PID}` um ou mais PID dos processos que receberão o sinal
 
@@ -969,11 +969,11 @@ kill -SIGABRT `pidof firefox`
 
 ## read
 
-Lê uma linha e coloca em alguma variável
+Lê uma linha e coloca em uma ou mais variáveis
 
 ### Opções úteis:
 
-- `-a {var}` lê múltiplas palavras separadas por espaços (ou o caractere em `$IFS`) e joga no array `var`
+- `-a {var}` lê a linha e armazena no array `var` cada palavra (separadas por espaço ou o caractere em `$IFS`)
 - `-s` não ecoa na tela o conteúdo digitado
 - `{var}` a variável na qual armazenará
 - `-p {texto}` mostre o texto informado como prompt antes de tentar ler
@@ -995,9 +995,193 @@ read -a numbers 'Informe seus números: '
 
 ## chmod
 
+Modifica as permissões de um arquivo, através de duas sintaxes:
+
+- *octal*, como em `chmod 777`
+- *simbólico*, como em `chmod u+o=rw`
+
+O formato simbólico base é: `chmod [ugoa][-+=][rwxXst]` onde `[ugoa]` representa a entidade que recebe as permissões para o dono (*user*), grupo (*group*), outros (*others*) ou todos (*all*), respectivamente. As permissões podem ser setadas via `+`, podem ser limpas via `-` e podem ser atribuídas como são, via `=`. A letra `X` define permissão para entrar no diretório somente se já houver para outros usuários, enquanto `s` (o *set-user-bit* ou *set-group-id*) e `t` (o *sticky-bit* ou *deletion-flag*).
+
+Por outro lado, no formato octal a base é: `chmod ugo` onde cada letra `u`, `g` e `o` representa um digito octal (`0` a `7`) que define as permissões de leitura (*read*), escrita (*write*) e execução (*execution*), ou rwx. Assim, `7` define `111` em binário que resulta em permissões concebidas de leitura, escrita e execução, enquanto `5` define `101` que resulta em permissões de leitura e execução mas não em escrita.
+
+**Dica rápida:** Uma permissão comum para arquivos é `chmod 644` que concede permissões de leitura e escrita para o dono (usuário) e leitura para o grupo e outros.
+
+**Dica rápida:** No modo simbólico, quando não fornecido quem recebe, considera todos (*all*). Também quando atribuído as permissões, limpa as que não foram Explicitamente informadas.
+
+### Opções úteis:
+
+`-c` quando houver modificação reporta na saída
+`-f` modo silencioso
+`-R` modo recursivo
+`-RH` siga os links no modo recursivo
+
+### Exemplos:
+
+```bash
+# todos recebem permissão para execução, outras permissão são deixadas intactas
+chmod +x arq
+# todos tem a permissão de execução revogada, outras permissão são deixadas intactas
+chmod -x arq
+# o dono tem as permissões de escrita e leitura, outras permissão são deixadas intactas
+chmod u+rw arq
+# o dono tem as permissões de escrita e leitura mas é revogada a de execução
+chmod u=rw arq
+# todos tem as permissões de leitura mas as demais (escrita e execução) são revogadas
+chmod a=r arq
+# todos tem todas as permissões concedidas
+chmod 777 arq
+# todos tem todas as permissões revogadas
+chmod 000 arq
+```
+
 ## chown
 
+Modifica o dono e grupo de arquivo
+
+Há três formatos:
+
+- `chown {owner} file` que modifica o dono apenas
+- `chown {owner}:{group} file` que modifica o dono e o grupo
+- `chown :{group} file` que modifica o dono apenas
+
+### Opções úteis:
+
+`-c` quando houver modificação reporta na saída
+`-f` modo silencioso
+`-R` modo recursivo
+`-RH` siga os links no modo recursivo
+
+**Dica rápida:** Normalmente essas modificações exigem permissões de super-usuário (root).
+
+### Exemplos:
+
+```bash
+# modifica o dono para r2d2 e o grupo para droids
+chown r2d2:droids arq
+# modifica apenas o dono para r2d2
+chown r2d2 arq
+# modifica o dono para r2d2 de todos os arquivos a partir do .
+chown -R r2d2 .
+# modifica o grupo para droids de todos os arquivos a partir do .
+chown -R r2d2 .
+```
+
 ## passwd
+
+Altera a senha do usuário assim como mostra estado dela
+
+Usuários comuns alteram apenas sua senha e root a de todos
+
+### Opções úteis:
+
+- `-d` deleta a senha, deixando-a vazia, fazendo a conta do usuário sem senha
+- `-e` expira a senha imediatamente
+- `-l` trava a senha imediatamente, não deixando o usuário se logar por esse método de autenticação (login e senha) mas ainda via outros (como chaves SSH)
+- `-n` define a quantidade mínima de dias para alterações de senha
+- `-x` define a quantidade de dias para expiração da senha, após isso será necessário alterar; valor de `-1` irá desativar a expiração!
+- `-w` define a quantidade de dias antes da senha expirar para ser avisado sobre
+- `-S` mostra o estado da senha
+- `-Sa` mostra o estado da senha de todos os usuários
+- `-u` destrava uma senha
+
+**Dica rápida:** O estado da senha é mostrada em 7 campos: o primeiro é o nome do usuário; o segundo é L se a senha está travada, NP se não tem senha ou P se tem uma senha válida; o terceiro é a data da última modificação da senha; o quarto é a quantidade mínima de dias para modificação; o quinto é o tempo para expiração; o sexto a quantidade de dias para avisar sobre modificação; e o sétimo, o número de dias em que a conta se encontra expirada.
+
+**Dica rápida:** Normalmente modificações além da senha, como tempo de expiração exigem conta de super-usuário.
+
+### Exemplos:
+
+```bash
+# é solicitado a senha atual e caso esteja correta, o programa solicita a nova e sua repetição
+passwd
+# mostra o estado da senha de todos os usuários
+sudo passwd -Sa
+# modifica o tempo de expiração e a quantidade de dias para avisar sobre 
+sudo passwd -x 365 -w 30 $USER
+```
+
+## dd
+
+Converte e copia um arquivo (a nível de byte)
+
+### Operandos comuns:
+
+- `bs={bytes}` vem de `block size` e define o tamanho básico do bloco; se não informado, padrão é `512`
+- `count={n}` define a quantidade de blocos a serem lidos; se não informado é `1`
+- `if={file}` define o arquivo de entrada
+- `of={file}` define o arquivo de saída
+- `iflag={flags}` define um ou mais flags na entrada
+- `oflag={flags}` define um ou mais flags na saída
+- `seek={n}` salta os primeiros `n` blocos na saída
+- `skip={n}` salta os primeiros `n` blocos na entrada
+- `status={none|noxfer|progress}` define o nível de verbosidade, onde `none` é silencioso até encontrar erros, `noxfer` só mostra a estatística final e `progress` mostra em tempo real as estatísticas
+- `conv={convs}` define um esquema de conversão (múltiplos valores são separados por vírgulas)
+
+### Conversões comuns:
+
+|  conv | descrição |
+| :----: | :--------:|
+| ascii | de EBCDIC para ASCII                                                              |
+| ebcdic | de ASCII para EBCDIC                                                             |
+| block | preencha com espaços para ocupar o tamanho de `cbs` nos blocos terminados em `\0` |
+| unblock | desfaça a operação acima                                                        |
+| lcase | converta maiúsculas para minúsculas                                               |
+| ucase | converta minúsculas para maiúsculas                                               |
+| swab | faça swap entre cada par de bytes da entrada                                       |
+| excl | aborte se o arquivo de saída existir                                               |
+| notrunc | não trunque o arquivo de saída, que é o padrão                                  |
+| noerror | se houver erros na leitura, continue!                                           |
+
+### Flags comuns:
+
+|  flags | descrição |
+| :----: | :--------:|
+| append | apenas em `oflag` e com `conv=notrunc`; cria se não existir; adiciona ao final       |
+| direct | use se possível accesso direto                                                       |
+| directory | falha a menos que seja diretório                                                  |
+| dsync | nos dados utilize I/O síncrona                                                        |
+| sync | nos dados e metadados utilize I/O síncrona                                             |
+| fullblock | apenas em iflags; preencha completamente os blocs de entrada                      |
+| nonblock | utilize I/O não-bloqueante                                                         |
+| noatime | não atualize o atime                                                                |
+| nofollow | não siga links                                                                     |
+
+**Dica rápida:** Podem ser utilizados sufixos nos valores numéricos, como `K`, `M`, `G` etc.
+
+**Dica rápida:** Se for enviado `SIGUSR1` para o `dd` (sem operando `status`) em execução ele irá mostrar na stderr o estado atual e continuará em seguida
+
+### Exemplos:
+
+```bash
+# converte os caracteres minúsculos de carta em maiúsculos em carta_mod
+dd conv=ucase if=carta of=carta_mod
+# 1M de zeros em nulos
+dd bs=1K count=1K if=/dev/zero of=nulos
+# incremente 1G de zeros em nulos em mostre o status em tempo real
+dd conv=notrunc oflag=append bs=1M count=1K if=/dev/zero of=nulos status=progress
+```
+
+## df
+
+Mostra o uso dos sistemas de arquivos
+
+### Opções úteis:
+
+- `-h` formato numérico legível para humanos
+- `-a` mostra todos, incluindo pseudo, duplicados ou inacessíveis
+- `-B` define o tamanho base do bloco, se `K`, `M`, `G` etc
+- `-t` apenas mostra os sistemas de arquivos do tipo informado
+- `-T` mostra uma coluna informando o tipo de sistema de arquivo
+
+### Exemplos:
+
+```bash
+# mostra todos os sistemas de arquivos reais em uso mostrando seus tipos
+df -Th
+# mostra os sistemas de arquivos a partir de /dev/sda1
+df -Th /dev/sda1
+# mostra apenas os sistemas FAT32
+df -htvfat
+```
 
 ## find
 
