@@ -87,7 +87,7 @@ Também é possível exibir a nível de bytes (usando a opção `-c`)
 - `-c+3` todos exceto os dois primeiros bytes
 - `-f` siga qualquer modificação
 
-**Dica rápida:** Em programas GNU os símbolos `+` e `-` normalmente tem o significado de *máximo* e *mínimo*, respectivamente. 
+**Dica rápida:** Pense nos símbolos `+` e `-` como os *primeiros* e *últimos*, respectivamente
 
 ## seq
 
@@ -118,7 +118,7 @@ seq -s' ' -2 .1 2
 
 ## sort
 
-Ordena um conjunto de linhas usando diversos critérios de comparação (numérico, alfabético, meses, randomicamente). O padrão é alfabético e crescente.
+Ordena um conjunto de linhas usando diversos critérios de comparação (numérico, alfabético, nome de meses, randômico). O padrão é alfabético e crescente.
 
 ### Opções úteis:
 
@@ -127,8 +127,7 @@ Ordena um conjunto de linhas usando diversos critérios de comparação (numéri
 - `-M` comparação baseada nos prefixos de meses (JAN, FEV, MAR, ...)
 - `-g` comparação numérica geral (mais lenta e pode ponto flutuante)
 - `-s` comparação estável
-- `-s` comparação estável
-- `-k` define a chave para ordenação de linhas de múltiplos campos
+- `-k` define a chave (ou as chaves, separadas por vírgulas) para ordenação de linhas de múltiplos campos na ordem declarada
 - `-t` define o separador para ordenação com base nos campos
 
 **Dica rápida:** Comparação sempre utiliza o locale para nomes de meses e pontos decimais.
@@ -164,13 +163,13 @@ cat <<FIM | sort -k2 -t';'
 FIM
 # ordena pelo mês (usando primeiro campo como chave) de forma decrescente
 cat <<FIM | sort -k1 -r -M
-JAN saulo alex
-FEV jorge de la penha
-MAR jorge de sá
-ABR daniel matias
-ABR roberta santana
-MAI roberto santos
-DEZ sílvio fabiano
+jan saulo alex
+fev jorge de la penha
+mar jorge de sá
+abr daniel matias
+abr roberta santana
+mai roberto santos
+dez sílvio fabiano
 FIM
 ```
 
@@ -198,18 +197,22 @@ echo {1,5,10} {1,5,10} {1,5,10} 8 | tr ' ' '\n' | sort -n | uniq
 
 ## shuf
 
-Seleciona linhas de forma randômica da entrada
+Seleciona linhas (ou termos) de forma randômica da entrada
 
 ### Opções úteis:
 
-- `-n` selecione no máximo a quantidade especificada
-- `-e` a entrada será uma string (use *here-string* (`<<<`) no bash)
+- `-n` seleciona no máximo (linha ou palavras, se usado com `-e`)
+- `-e` a entrada será uma lista de palavras separados por espaço
+
+**Dica rápida:** o termo `palavra` não restringe apenas a palavras de fato, pode ser números, o que importa é que estejam separados por espaço
 
 ### Exemplos:
 
 ```bash
 # cinco números aleatórios entre 1 e 10
 shuf -e -n5 <<< echo {1..10}
+# selecione duas letras do alfabeto
+shuf -n2 -e <<< : {a..z}
 # cinco números aleatórios entre 0 e 1
 seq 0 .05 1 | shuf -n5
 ```
@@ -331,7 +334,7 @@ Avalia expressões numéricas ou de cadeia (string)
 
 É um comando arcaico que serve para realizar comparações entre dois arquivos ordenados linha a linha, informando em três colunas o resultado, sendo a 1ª os valores únicos do primeiro arquivo, sendo a 2ª os valores únicos do segundo arquivo e a terceira os valores comuns em ambos.
 
-**Dica rápida:** Na prática, o comando serve para testar a igualdade entre dois arquivos, e apenas isso. Use assim: `comm file1 file2 >/dev/null 2>&1; echo $?`.
+**Dica rápida:** Na prática, o comando serve para testar a igualdade entre dois arquivos, e apenas isso. Use assim: `comm file1 file2 &>/dev/null; echo $?`.
 
 ## test
 
@@ -465,6 +468,8 @@ echo 'scale=5;sqrt(2)' | bc
 # raíz quadrada de 1 até 10 incrementado em 0.05 com precisão de 5 casas
 # LC_NUMERIC foi necessário para mudar o formato do número (pt_BR usa vírgula)
 for n in $(LC_NUMERIC=en_US seq 1 .05 10); do echo "scale=5;sqrt($n)" | bc; done
+# todos os números binários de 0 a 65535
+bc <<< 'a=0;ibase=G;obase=2;while (a <= FFFF) {a;a+=1}'
 ```
 
 ## tr
@@ -491,8 +496,8 @@ Transforma a entrada substituindo caracteres de um alfabeto por um outro
 ```bash
 # deleta todas as linhas vazias
 tr -s '\n' < main.c
-# troca maiúsculas por minúsculas
-cat | tr A-Z a-z
+# troca da stdin as letras maiúsculas por minúsculas
+tr A-Z a-z
 # troca os caracteres do alfabeto aeiou por 12345, nessa ordem
 echo era uma vez três porquinhos | tr aeiou 12345
 ```
@@ -604,9 +609,13 @@ Por padrão a listagem é em ordem alfabética
 - `-d` lista o diretório em si, não o conteúdo
 - `-H` segue o link simbólico quando o é informado especificamente (por padrão não segue)
 - `-r` ordem reversa
-- `-c` ordena pela momento a qual o metadado foi modificado (últimas modificações primeiro) - ou *ctime*
-- `-t` ordena pelo momento a qual o conteúdo foi modificado (últimas modificações primeiro) - ou *mtime*
-- `-u` ordena pelo momento de acesso (últimos acessados primeiro) - ou *atime*
+- `-c` ordena pelo *ctime*
+- `-lc` ordena pelo nome e mostra *ctime*
+- `-lct` ordena e mostra pelo *ctime*
+- `-t` ordena pelo tempo (mais novos primeiro) que pode ser definido por `--time`, `-c` ou `-u`
+- `-u` ordena pelo *atime*
+- `-lu` ordena pelo nome e mostra o *atime*
+- `-lut` ordena e mostra pelo *atime*
 - `-S` ordena pelo tamanho (maiores primeiro)
 - `-X` ordena pela extensão
 - `--time={type}` especifica qual o momento de tempo utilizado no formato de lista detalhada: `atime` (ou `access`, `use`), `ctime` (ou `status`), `mtime` (ou `modification`), `birth` (ou `creation`)
@@ -630,6 +639,8 @@ Na primeira coluna do formato detalhado, há informações de tipo de arquivo e 
 
 > `atime`, `ctime` e `mtime` representam os três registros de tempo presentes em qualquer metadado de arquivo no Linux. Sendo `atime` o *access time* ou seja, representa o momento em que o arquivo foi acessado pela última vez. Já o `ctime` é o *change time* que representa o último momento em que algum metadado do arquivo foi modificado. Por último o `mtime` que é o *modified time* a qual indica o momento a qual o conteúdo do arquivo foi modificado pela última vez. Por padrão o `ls` utiliza o `mtime`. Para visualizar todos os momentos citados também é possível usar o comando `stat`.
 
+**Dica rápida:** O *set-user-id* e o *set-group-id* permitem que usuários comuns possam ter as mesmas permissões de dono ou de grupo, ao acessar o arquivo; O *sticky-bit* se aplica apenas em diretórios, e impede que qualquer usuário que não o dono (do arquivo ou do diretório) e o root possam excluir ou renomear arquivos no diretório mesmo que tenham permissões para isso.
+
 ### Exemplos:
 
 ```bash
@@ -650,11 +661,11 @@ ls -lSr
 # lista de forma detalhada . e ordenada pela extensão
 ls -lX
 # lista de forma detalhada . e ordenada pelo último acesso
-ls -lu
+ls -ltu
 # lista de forma detalhada . e ordem alfabética reversa
 ls -lr
 # lista de forma detalhada . e ordenada pelo último acesso
-ls -l --time=ctime
+ls -lt --time=ctime
 # supondo que o caminho seja um link simbólico, informa para onde ele está apontando
 ls -l Vídeos
 # supondo o mesmo, informa o conteúdo apontado pelo link (ou seja, segue ele)
@@ -665,6 +676,10 @@ ls -lGI'*.c' -I'*.cpp' -I'*.h'
 ls -a
 # lista os últimos 10 arquivos (incluindo ocultos) de . recentemente modificados
 ls -at | head -n10
+# as permissões são normalmente: -rwsr-xr-x, indicando que o set-user-bit está setado, o que permite que usuários comuns tenha permissões de root, o dono desse arquivo. Outro exemplo é /sbin/sudo
+ls -l /sbin/passwd
+# as permissões são normalmente: drwxrwxrwt, indicando que o sticky-bit está setado, o que impede que usuários comuns mesmo com permissões elevadas possam renomear ou deletar arquivos de outros usuários, a menos que ele seja o dono do arquivo, ou o dono do diretório ou o root.
+ls -ld /tmp
 ```
 
 ## cp
@@ -823,7 +838,7 @@ O estado de um processo é exibido na coluna `S` ou `STAT`, e pode ser a qualque
 - `T` parado por sinal de controle de *jobs*, normalmente quando coloca alguma tarefa em *background* no terminal via `C-z`
 - `t` parado por de um depurador durante seu *tracing*
 - `X` morto (não deveria ser visto)
-- `D` defunto ou zumbi (quando ele finaliza mas o seu pai não é notificado apropiadamente; o processo de PID 1 - `/sbin/init` - normalmente é quem encerra processos nesse estado)
+- `Z` defunto ou zumbi (quando ele finaliza mas o seu pai não é notificado apropiadamente; o processo de PID 1 - `/sbin/init` - normalmente é quem encerra processos nesse estado)
 
 ### Chaves dos cabeçalhos
 
@@ -893,6 +908,18 @@ São usadas como argumentos do `--sort`, `-o` ou `-O` para selecionar as colunas
 | wname | WCHAN |
 | wops | WOPS |
 
+## du
+
+Estima o uso de espaço do diretório
+
+### Opções úteis:
+
+- `-a` contabiliza tudo, o padrão
+- `-h` mostra em formato numérico legível para humanos
+- `-H` segue links simbólicos
+- `-B{K|M|G|T}` define o formato numérico: kilobytes, megabytes etc; padrão é bytes (sem o `-B`)
+- `-c` mostra o total na última linha
+- `-s` mostra apenas o total
 
 ## kill
 
@@ -965,7 +992,7 @@ Toda redireção é avaliada antes de executar o comando, da esquerda para direi
 
     `&>> ARQUIVO` (ou `>> ARQUIVO 2>&1`)
 
-- *Here-documents*
+- *Here-document*
 
     ```
     [n]<<[-] DELIMITADOR
@@ -973,16 +1000,58 @@ Toda redireção é avaliada antes de executar o comando, da esquerda para direi
     DELIMITADOR
     ```
 
-    - Por padrão, dentro do texto as variáveis serão interpoladas
-    - O delimitador pode vir entre aspas simples `'DELIMITADOR'`, dessa forma não haverá interpolação no texto
-    - O delimitador final não pode ser antecedido por nenhum caractere, ou seja, ele deve começar na primeira coluna
-    - Se o delimitador inicial for precedido por `-` então o texto manterá a indentação original
+    Por padrão, dentro do texto as variáveis serão interpoladas
 
-- *Here-strings*
+    O delimitador pode vir entre aspas simples `'DELIMITADOR'`, dessa forma não haverá interpolação no texto
+
+    O delimitador final não pode ser antecedido por nenhum caractere, ou seja, ele deve começar na primeira coluna
+
+    Se o delimitador inicial for precedido por `-` então o texto manterá a indentação original
+
+- *Here-string*
 
     `[n]<<< TEXTO`
 
-    - O texto sempre conterá o `\n` final
+    O texto sempre conterá o `\n` final
+
+- Duplicação de descritores
+
+    `[n]<& ARQUIVO` para entrada
+
+    `[n]>& ARQUIVO` para saída
+
+- Transferência de descritores
+
+    `[n]<&[m]-` transfere o descritor `m` para `n` e fecha `m`
+
+    `[n]>&[m]-` transfere o descritor `m` para `n` e fecha `m`
+
+    Note que o `-` serve para fechar o descritor e serve para qualquer sintaxe de redireção, não apenas sendo usado em transferência
+
+- Abertura de descritor para leitura e escrita
+
+    `[n]<> ARQUIVO`
+
+#### Exemplos
+
+```bash
+# stdout agora é arq
+echo 1+1 >arq
+# stdin agora é arq 
+bc <arq
+# stderr agora é /dev/null (descarta)
+ls nao-existo 2>/dev/null
+# here-document é o stdin de cat que por sua tem seu stdout conectado a stdin de python
+cat <<FIM | python
+print('Ok from Python')
+FIM
+# stdout e stderr são agora arq
+ls -R /opt &>arq
+# stdin é a string 1+2
+bc <<<1+2
+# stdout é arq e escreve no fim dele
+echo a >>arq
+```
 
 ### Pontos gerais
 
