@@ -1185,6 +1185,54 @@ df -htvfat
 
 ## find
 
+Busca arquivos no disco
+
+Há dois grupos de opções para o `find`, o primeiro *precede* os diretórios de busca, enquanto o segundo *sucede* os diretórios de busca.
+
+### Opções úteis:
+
+#### Primeiro grupo - ou argumentos (antecede os diretórios)
+
+- `-P` nunca segue links simbólicos (padrão)
+- `-L` segue links simbólicos
+- `-H` não segue links com exceção exclusivamente na resolução dos diretórios de busca 
+- `-D {exec|opt|rates|search|stat|tree|all|help}` opções de depuração, que pode ser bem útil quando quer saber exatamente o que o `find` está fazendo
+- `-O {0|1|2|3}` habilita otimizações na busca ao custo de processamento; padrão é 1; otimização total é 3.
+
+#### Segundo grupo - ou expressões (sucede os diretórios)
+
+Há cinco tipos de expressões: a) testes; b) ações; c) opções globais; d) opções posicionais; e e) operadores
+
+##### Testes
+
+**Dica rápida:** Todos os números `n` podem ter o formato `+n` significando maiores que `n`, `-n` para menores que `n` e `n` para exatamente `n`.
+
+- `-amin {n}` tempo em minutos desde o último acesso; o sufixo *min* não é de *mínimo*!
+- `-anewer {file}` tempo desde o último acesso deve ser mais recente que de `file`
+- `-atime {n}` tempo em horas desde o último acesso
+- `-cmin {n}` tempo em minutos desde a última alteração de metadados
+- `-cnewer {n}` tempo desde a última alteração de metadados deve ser mais recente que de `file`
+- `-ctime {n}` tempo em horas desde a última alteração de metadados
+- `-empty` arquivo de tamanho zero
+- `-executable` permissão de execução
+- `-iname {regex}` busca insensível ao caso no nome do arquivo (basename)
+- `-iregex {regex}` busca insensível ao caso no caminho relativo do arquivo a partir do diretório informado
+- `-mmin {n}` tempo em minutos desde a última alteração no conteúdo do arquivo
+- `-mtime {n}` tempo em horas desde a última alteração no conteúdo do arquivo
+- `-name {regex}` similar a `iname` porém sensível ao caso
+- `-newer {file}` tempo desde a última alteração no conteúdo do arquivo deve ser mais recente que de `file`
+- `-perm {mode}` o modo deve ser exatamente o das permissões do arquivo
+- `-perm -{mode}` o modo deve conter nas permissões do arquivo
+- `-perm /{mode}` ao menos uma das permissões deve conter nas permissões do arquivo
+- `-readable`
+- `-regex {regex}` busca sensível ao caso no caminho relativo do arquivo a partir do diretório informado
+- `-samefile {file}` é o mesmo arquivo que `file`
+- `-size {n}` pode conter sufixos `b` (padrão, bloco de 512 bytes), `c` (bytes), `w` (words), `k`, `M`, `G`
+- `-type {type}` `b` arquivo de bloco, `c` arquivo de caractere, `d` diretórios, `p`, `f` arquivo comum, `l` link simbólico, `s` socket; múltiplos são separados por vírgulas
+- `-used {n}` tempo em dias desde o último acesso
+- `-user {name}` dono
+- `-writable` permissão de escrita
+
 ## grep
 
 ## sed
