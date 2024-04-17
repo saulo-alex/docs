@@ -1265,6 +1265,12 @@ Na ordem de precedência (maior para menor)
 - `expr1 -a expr2` (ou `expr1 expr2`) *AND*; se `expr1` é falsa não avalia `expr2`
 - `expr1 -o expr2` *OR*; se `expr1` é verdade não avalia `expr2`
 
+### Exemplos:
+
+```bash
+
+```
+
 ## grep
 
 ## sed
