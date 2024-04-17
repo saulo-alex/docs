@@ -1215,23 +1215,55 @@ Há cinco tipos de expressões: a) testes; b) ações; c) opções globais; d) o
 - `-ctime {n}` tempo em horas desde a última alteração de metadados
 - `-empty` arquivo de tamanho zero
 - `-executable` permissão de execução
-- `-iname {regex}` busca insensível ao caso no nome do arquivo (basename)
-- `-iregex {regex}` busca insensível ao caso no caminho relativo do arquivo a partir do diretório informado
+- `-name {glob}` busca sensível ao caso no *basename* (`c` de `./a/b/c`) do caminho apenas (o arquivo retirado a parte das pastas)
+- `-iname {glob}` mesma busca acima porém insensível ao caso
+- `-regex {regex}` busca sensível ao caso no caminho relativo do arquivo (`./a/b/c`) a partir do diretório informado
+- `-iregex {regex}` mesma busca acima porém insensível ao caso
 - `-mmin {n}` tempo em minutos desde a última alteração no conteúdo do arquivo
 - `-mtime {n}` tempo em horas desde a última alteração no conteúdo do arquivo
-- `-name {regex}` similar a `iname` porém sensível ao caso
 - `-newer {file}` tempo desde a última alteração no conteúdo do arquivo deve ser mais recente que de `file`
 - `-perm {mode}` o modo deve ser exatamente o das permissões do arquivo
 - `-perm -{mode}` o modo deve conter nas permissões do arquivo
 - `-perm /{mode}` ao menos uma das permissões deve conter nas permissões do arquivo
-- `-readable`
-- `-regex {regex}` busca sensível ao caso no caminho relativo do arquivo a partir do diretório informado
+- `-readable` permissão de leitura
 - `-samefile {file}` é o mesmo arquivo que `file`
 - `-size {n}` pode conter sufixos `b` (padrão, bloco de 512 bytes), `c` (bytes), `w` (words), `k`, `M`, `G`
 - `-type {type}` `b` arquivo de bloco, `c` arquivo de caractere, `d` diretórios, `p`, `f` arquivo comum, `l` link simbólico, `s` socket; múltiplos são separados por vírgulas
 - `-used {n}` tempo em dias desde o último acesso
 - `-user {name}` dono
 - `-writable` permissão de escrita
+
+##### Ações
+
+- `-delete` deleta arquivos e retorna `0` no sucesso
+- `-exec {cmd} \;` executa comando e retorna `0` no sucesso; tudo é parte do comando até o primeiro `;`; a string `{}` dentro de `cmd` é interpolada com o nome do arquivo
+- `-exec {cmd} {} +` similar ao acima, porém para cada arquivo, anexa o `{}` corrente e executa após passar por todos os arquivos
+- `-ok {cmd} \;` como `-exec` porém só executa o comando se o usuário concordar, para cada arquivo
+- `-ls` lista no formato `ls -dils`
+- `-fls {arq}` lista no formato `ls -dils` porém redirecionado para `arq`
+- `-fprint {file}` imprime cada caminho completo de arquivo em `file`
+- `-print` imprime cada caminho completo de arquivo seguido com `\n`
+- `-printf {fmt}` imprime conforme o formato; algumas diretivas são `%h` (*dirname*), `%f` (*basename*), `%t` (última modificação em), `%M` (as permissões em formato simbólico), `%s` (tamanho em bytes)
+
+##### Opções globais
+
+- `-depth` sempre processa o conteúdo do diretório antes do próprio diretório
+- `-maxdepth {n}` profundidade máxima na qual a busca será efetuada; mínimo é `0` porém só faz efeito com `-depth`, senão o mínimo é `1` (o atual, ou seja o conteúdo).
+- `-mindepth {n}` profundidade mínima; mínimo `1`.
+
+##### Opções posicionais
+
+- `-daystart` o dia a partir das quais `amin`, `cmin`, `ctime` (e nos outros não citados) irão se basear
+- `-regextype {ed|emacs|awk|grep|egrep|sed}` o tipo de regex que irá ser aplicada em `regex` ou `iregex`; há mais, veja com `find -regextype help`
+
+##### Operadores
+
+Na ordem de precedência (maior para menor)
+
+- `(expr)`
+- `! expr`
+- `expr1 -a expr2` (ou `expr1 expr2`) *AND*; se `expr1` é falsa não avalia `expr2`
+- `expr1 -o expr2` *OR*; se `expr1` é verdade não avalia `expr2`
 
 ## grep
 
