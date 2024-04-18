@@ -1253,7 +1253,7 @@ Há cinco tipos de expressões: a) testes; b) ações; c) opções globais; d) o
 
 ##### Opções posicionais
 
-- `-daystart` o dia a partir das quais `amin`, `cmin`, `ctime` (e nos outros não citados) irão se basear
+- `-daystart` defina o momento que `amin`, `cmin`, `ctime` (e tantos outros testes relacionados) irão se basear como sendo o início do dia e não sendo mais as últimas 24h (padrão)
 - `-regextype {ed|emacs|awk|grep|egrep|sed}` o tipo de regex que irá ser aplicada em `regex` ou `iregex`; há mais, veja com `find -regextype help`
 
 ##### Operadores
@@ -1268,10 +1268,56 @@ Na ordem de precedência (maior para menor)
 ### Exemplos:
 
 ```bash
-
+# encontre todos os arquivos sem se preocupar com o caso de c, cc, cpp e h em /usr/share
+find /usr/share -iname '*.c' -o -iname '*.cpp' -o -iname '*.cc' -o -iname '*.h' 2>/dev/null
+# encontre coisas relacionadas a google e chrome
+find /opt -regextype egrep -iregex '.*chrome.*' -a -iregex '.*google.*'
+# os arquivos de /opt acessados nos últimos 5 minutos
+find /opt -type f -amin -5
+# arquivos em /opt que são mais novos que /opt/asdf-vm/asdf.sh 
+find /opt -anewer /opt/asdf-vm/asdf.sh
+# arquivos em /opt que foram acessados a mais de 24 horas
+find /opt -atime +24
+# arquivos txt em /usr/share/doc que foram modificados nos últimos 30 minutos
+find /usr/share/doc -iname '*.txt' -amin -30
+# arquivos txt de /usr/share/doc acessados no último ano
+find /usr/share/doc -iname '*.txt' -atime -"$((24 * 30 * 12))"
+# quantidade de arquivos vazios em /usr
+find / -empty 2>/dev/null | wc -l
+# arquivos que foram acessados a mais de 1 ano em /boot
+find /boot -used +365 2>/dev/null
 ```
 
 ## grep
+
+Verifica a entrada em busca de padrões definididos por expressões regulares (ou *regex*)
+
+São suportados três formatos de *regex*:
+
+1. Básica (ou **BRE**) - é a padrão
+2. Extendida (ou **ERE**)
+3. Compatível com Perl (ou **PCRE**)
+
+### Gramática
+
+Os caracteres `.?*+{|()[\^$` são especiais
+
+Qualquer outro é ordinário
+
+- `.` algo; casa um caractere, qualquer que seja 
+- `?` opcional; casa um ou nenhum caractere, qualquer que seja
+- `*` qualquer; casa nenhum ou um ou mais caracteres, qualquer que seja
+- `{N}` casa o item que precede exatamente `N` vezes, qualquer que seja
+- `{N,}` casa o item que precede ao menos `N` vezes, qualquer que seja
+- `{,M}` casa o item que precede no máximo `M` vezes, qualquer que seja
+- `{N,M}` casa o item que precede ao menos `N` vezes e no máximo `M` vezes, qualquer que seja
+- `|` alternativa; casa o item que precede ou o item que sucede, qualquer que seja
+- `[lst]` lista; casa com um caractere da lista, qualquer que seja; a lista pode estar no formato de intervalo `[A-Z]`, `[a-z0-9]`
+- `[^lst]` lista negada; casa com qualquer caractere que não esteja na lista, qualquer que seja
+- `[[:alnum:]]` lista da classe alfanumérica; casa com um caractere alfanumérico dentre `[0-9A-Za-z]`, qualquer que seja
+- `[[:alpha:]]` lista da classe alfabética; casa com um caractere alfabético dentre `[A-Za-z]`, qualquer que seja
+- `[[:blank:]]` lista da classe de branco; casa com um caractere branco ` ` (espaço) ou `\t`, qualquer que seja
+- `[[:cntrl:]]` lista da classe de controle; casa com um caractere de controle (na tabela ASCII os primeiros 31 caracteres e DEL - 177 em decimal), qualquer que seja
 
 ## sed
 
