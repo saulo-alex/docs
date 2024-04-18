@@ -1296,16 +1296,17 @@ São suportados três formatos de *regex*:
 
 1. Básica (ou **BRE**) - é a padrão
 2. Extendida (ou **ERE**)
-3. Compatível com Perl (ou **PCRE**)
+3. Compatível com Perl (ou **PCRE**) - não exposto aqui, exceto `\w`
 
 ### Gramática
 
-Os caracteres `.?*+{|()[\^$` são especiais
+Os caracteres `.?*+{|()[\^$` são especiais, ou seja, são metacaracteres
 
 Qualquer outro é ordinário
 
 - `.` algo; casa um caractere, qualquer que seja 
 - `?` opcional; casa um ou nenhum caractere, qualquer que seja
+- `+` mandatório; casa com um ou mais caracteres, qualquer que seja
 - `*` qualquer; casa nenhum ou um ou mais caracteres, qualquer que seja
 - `{N}` casa o item que precede exatamente `N` vezes, qualquer que seja
 - `{N,}` casa o item que precede ao menos `N` vezes, qualquer que seja
@@ -1314,10 +1315,53 @@ Qualquer outro é ordinário
 - `|` alternativa; casa o item que precede ou o item que sucede, qualquer que seja
 - `[lst]` lista; casa com um caractere da lista, qualquer que seja; a lista pode estar no formato de intervalo `[A-Z]`, `[a-z0-9]`
 - `[^lst]` lista negada; casa com qualquer caractere que não esteja na lista, qualquer que seja
-- `[[:alnum:]]` lista da classe alfanumérica; casa com um caractere alfanumérico dentre `[0-9A-Za-z]`, qualquer que seja
-- `[[:alpha:]]` lista da classe alfabética; casa com um caractere alfabético dentre `[A-Za-z]`, qualquer que seja
-- `[[:blank:]]` lista da classe de branco; casa com um caractere branco ` ` (espaço) ou `\t`, qualquer que seja
-- `[[:cntrl:]]` lista da classe de controle; casa com um caractere de controle (na tabela ASCII os primeiros 31 caracteres e DEL - 177 em decimal), qualquer que seja
+- `[:alnum:]` classe alfanumérica; caracteres alfabéticos ou numéricos
+- `[:alpha:]` classe alfabética; caracteres alfabéticos, qualquer que seja
+- `[:blank:]` classe brancos; caracteres de espaço ou tabulação
+- `[:cntrl:]` classe controles; caracteres de controle, ex.: `<BS>`, `<RET>`
+- `[:digit:]` classe dígitos; caracteres digito decimais: `0` a `9`
+- `[:graph:]` classe gráfica; caracteres gráficos exceto espaço
+- `[:lower:]` classe minúscula; caracteres de letra minúscula
+- `[:upper:]` classe maiúscula; caracteres de letra maiúscula
+- `[:print:]` classe imprimíveis; a mesma de `[:graph:]` porém incluindo espaço
+- `[:punct:]` classe pontuação; caracteres de pontuação
+- `[:space:]` clase espaço; caracteres de espaço: `\f`, `\n`, `\r`, `\t` e `\v`
+- `[:xdigit:]` classe hexadecimal; caracteres de dígitos hexadecimais; `0` a `F`
+- `^` casa com o início da linha
+- `$` casa com o fim da linha
+- `\b` casa com o início de uma palavra se colocada no início e casa com o fim se colocada no fim
+- `\B` casa com o início de uma sequência de brancos (negação da palavra) se colocada no início e casa com o fim se colocada no fim
+- `\<` casa com o início de uma palavra
+- `\>` casa com o fim de uma palavra
+- `\w` sinônimo de `[_[:alnum:]]`
+- `\W` sinônimo de `[^_[:alnum:]]`
+- `\1` a `\9` retroreferências (ou retrovisor), casa com o n-ésimo grupo casado da expressão
+
+**Dica rápida:** A diferença entre **BRE** e **ERE** é que alguns metacaracteres (especificamente `?+{|()`) perdem seu significado especial na **BRE**, e devem ser usados de forma escapada como `\{2,}`, `[a-z]\+` ou `\(a\{3,5}\)`. Note que o `}` não perde seu significado especial e pode ser ser usado como é, ex.: `\{2,3}`. Na **ERE** não há necessidade de escapar nenhum desses metacarecteres e são escritos como são.
+
+**Dica rápida:** Uma classe é sempre escrita em uma lista, pois internamente ela se transforma em um intervalo `first-last`
+
+**Dica rápida:** O comportamento normal do `grep` é encontrar sempre a maior *string* que casa com a *regex*
+
+### Opções úteis:
+
+- `-E` habilita a sintaxe de **ERE**
+- `-P` habilita a sintaxe de **PCRE**
+- `-G` habilita a sintaxe de **BRE**, que é o padrão
+- `-i` não diferencia maiúsculas de minúsculas
+- `-v` inverte o comportamento, mostrando todas as linhas que não há casamento
+- `-w` similar a envolver uma expressão com `\<` e `\>` ou `\b`
+- `-x` similar a envolver a expressão inteira com `^` e `$`
+- `-c` mostra apenas a quantidade de casamentos, e não as expressões casadas
+- `-m {n}` limita até `m` casamentos, após encerra
+- `-o` mostra exclusivamente as partes da linha casada, e não a linha inteira (que é o padrão)
+- `-n` mostra o número da linha do casamento
+
+
+### Exemplos:
+
+```bash
+```
 
 ## sed
 
