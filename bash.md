@@ -1254,7 +1254,7 @@ Há cinco tipos de expressões: a) testes; b) ações; c) opções globais; d) o
 ##### Opções posicionais
 
 - `-daystart` defina o momento que `amin`, `cmin`, `ctime` (e tantos outros testes relacionados) irão se basear como sendo o início do dia e não sendo mais as últimas 24h (padrão)
-- `-regextype {ed|emacs|awk|grep|egrep|sed}` o tipo de regex que irá ser aplicada em `regex` ou `iregex`; há mais, veja com `find -regextype help`
+- `-regextype {ed|emacs|awk|grep|egrep|sed}` o tipo de expressão regular que irá ser aplicada em `regex` ou `iregex`; há mais, veja com `find -regextype help`
 
 ##### Operadores
 
@@ -1292,7 +1292,7 @@ find /boot -used +365 2>/dev/null
 
 Verifica a entrada em busca de padrões definididos por expressões regulares (ou *regex*)
 
-São suportados três formatos de *regex*:
+São suportados três formatos de expressões regulares:
 
 1. Básica (ou **BRE**) - é a padrão
 2. Extendida (ou **ERE**)
@@ -1341,7 +1341,7 @@ Qualquer outro é ordinário
 
 **Dica rápida:** Uma classe é sempre escrita em uma lista, pois internamente ela se transforma em um intervalo `first-last`
 
-**Dica rápida:** O comportamento normal do `grep` é encontrar sempre a maior *string* que casa com a *regex*
+**Dica rápida:** O comportamento normal do `grep` é encontrar sempre a maior cadeia que casa com a expressão regular
 
 ### Opções úteis:
 
@@ -1357,13 +1357,47 @@ Qualquer outro é ordinário
 - `-o` mostra exclusivamente as partes da linha casada, e não a linha inteira (que é o padrão)
 - `-n` mostra o número da linha do casamento
 
-
 ### Exemplos:
 
 ```bash
 ```
 
 ## sed
+
+Editor de *stream* para transformação e filtragem
+
+Vem de *stream editor*
+
+Há apenas uma passagem pelo *stream*, ao menos de forma padrão
+
+### Opções úteis:
+
+- `-n` modo silencioso
+- `-e` comandos que serão executados
+- `-f` comandos que serão executados através de um arquivo
+- `-i {sufixe}` edita o original e não envia para `stdout`, caso seja fornecido um sufixo gera uma backup com esse sufixo
+- `-E` habilita a gramática de **ERE**
+
+**Dica rápida:** Se os comandos não forem informados via `-e` ou `-f` o `sed` pegará do primeiro argumento que não seja de opção
+
+### Comandos úteis:
+
+Todo comando `sed` segue o formato `{addr}{operation}{opts}`, onde operação é um único caractere, o endereço `addr` é qual ou quais linhas serão editadas (separadas por `,` ou `-`) e é opcional e as opções `opts` modificam a operação, e é opcional.
+
+- `#` comentário
+- `=` mostra o número da linha
+- `a\{TEXT}` anexa `TEXT` ao fim
+- `a {TEXT}` idem
+- `c\{TEXT}` substitue a linha por `TEXT`
+- `c {TEXT}` idem
+- `d` deleta
+- `e` executa um comando de shell dado na linha e substitue-a pelo resultado
+- `i\{TEXT}` insere `TEXT` antes da linha
+- `i {TEXT}` idem
+- `p` mostra a linha (mais útil que o acima)
+- `s/{regex}/{replacement}/[{flags}]` substituição de uma expressão regular por uma cadeia, ao estilo do vim, ou ao contrário?
+- `y/{src}/{dst}/` transliteração dos caracteres, na ordem, dados de `src` em caracteres respectivos, na ordem, dados por `dst`; novamente ao estilo de `tr` ou mesmo do vim, ou o contrário????
+- `{ CMD ; CMD ... }` agrupamento de comandos
 
 ## awk
 
