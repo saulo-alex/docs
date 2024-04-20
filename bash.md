@@ -1382,7 +1382,11 @@ Há apenas uma passagem pelo *stream*, ao menos de forma padrão
 
 ### Comandos úteis:
 
-Todo comando `sed` segue o formato `{addr}{operation}{opts}`, onde operação é um único caractere, o endereço `addr` é qual ou quais linhas serão editadas (separadas por `,` ou `-`) e é opcional e as opções `opts` modificam a operação, e é opcional.
+Todo comando `sed` segue o formato `{addr}{operation}{opts}`.
+
+O endereço pode ser no formato `2,5` que é uma faixa entre as linhas `2` e `5` ou mesmo `!2,5` indicando qualquer linha que não entre `2` e `5`, ou pode ser uma expressão regular como `/^echo/` indicando que quando haver um `echo` no início da linha será este o endereço escolhido
+
+As opções são aplicadas e específicas de cada comando
 
 - `#` comentário
 - `=` mostra o número da linha
@@ -1396,8 +1400,21 @@ Todo comando `sed` segue o formato `{addr}{operation}{opts}`, onde operação é
 - `i {TEXT}` idem
 - `p` mostra a linha (mais útil que o acima)
 - `s/{regex}/{replacement}/[{flags}]` substituição de uma expressão regular por uma cadeia, ao estilo do vim, ou ao contrário?
-- `y/{src}/{dst}/` transliteração dos caracteres, na ordem, dados de `src` em caracteres respectivos, na ordem, dados por `dst`; novamente ao estilo de `tr` ou mesmo do vim, ou o contrário????
+- `y/{src}/{dst}/` transliteração dos caracteres, na ordem, dados de `src` em caracteres respectivos, na ordem, dados por `dst`; não suporta faixas `a-z`, tem que escrever todos os caracteres explicitamente!
 - `{ CMD ; CMD ... }` agrupamento de comandos
+
+### Exemplos:
+
+```bash
+# mostra o número de cada linha (1 a 26) da entrada e o conteúdo dela (uma letra em cada de a até z)
+printf "%s\n" {a..z} | sed =
+# adicionando após cada linha uma linha separadora
+printf "%s\n" {a..z} | sed 'a\--------'
+# deletando as números impares
+seq 100 | sed '/^[0-9]\+[02468]\+$\|[02468]\+$/d'
+# mostrando apenas os números impares
+seq 100 | sed -n '/^[0-9]\+[02468]\+$\|[02468]\+$/p'
+```
 
 ## awk
 
