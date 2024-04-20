@@ -1403,6 +1403,31 @@ As opções são aplicadas e específicas de cada comando
 - `y/{src}/{dst}/` transliteração dos caracteres, na ordem, dados de `src` em caracteres respectivos, na ordem, dados por `dst`; não suporta faixas `a-z`, tem que escrever todos os caracteres explicitamente!
 - `{ CMD ; CMD ... }` agrupamento de comandos
 
+#### O comando `s`
+
+O termo vêm de *substitute*
+
+A gramática das expressões regulares é basicamente a da **BRE**
+
+Formato básico é `s/{regex}/{replacement}/{opts}`
+
+O caractere separador `/` pode ser alterado para qualquer outro não-ambíguo com a gramática do `sed`, como `#` ou `,`, por exemplo
+
+Algumas dicas:
+
+- `\1` a `\9` retroreferências (ou retrovisor)
+- `&` utilizado em `{replacement}`; é a cadeia completa em que houve casamento
+- `\L{string}\E` utilizado também em `{replacement}`; serve para tornar a cadeia minúscula até o `\E` ou mesmo `\U` 
+- `\U{string}\E` utilizado também em `{replacement}`; serve para tornar a cadeia maiúscula até o `\E` ou mesmo `\L` 
+- `\l` utilizado também em `{replacement}`; o próximo caractere se tornará minúsculo
+- `\u` utilizado também em `{replacement}`; o próximo caractere se tornará miúsculo
+- `g` utilizado em `{opts}`; no comportamento padrão do `sed` quando encontra um casamento ele prossegue para linha seguinte, com `g` tenta casar ao máximo na linha antes de seguir para próxima
+- `{n}` utiilzado também em `{opts}`; apenas substitue a `n`-ésima ocorrência
+- `p` utiilzado também em `{opts}`; para cada substituição mostra como ficou
+- `e` utiilzado também em `{opts}`; se houve uma substituição, executa o comando que foi casado na linha e substitui-a com o resultado dele
+- `i` utiilzado também em `{opts}`; não diferencia maiúsculas de minúsculas
+- `m` utiilzado também em `{opts}`; suporta linhas múltiplas, `^$` não irá casar somente em uma linha mas em múltiplas
+
 ### Exemplos:
 
 ```bash
