@@ -1298,6 +1298,8 @@ São suportados três formatos de expressões regulares:
 2. Extendida (ou **ERE**)
 3. Compatível com Perl (ou **PCRE**) - não exposto aqui, exceto `\w`
 
+**Dica rápida:** O `grep` foi criado em 1973 por Ken Thompson nos laboratórios da Bell Labs como parte da implementação do Unix original
+
 ### Gramática
 
 Os caracteres `.?*+{|()[\^$` são especiais, ou seja, são metacaracteres
@@ -1442,6 +1444,58 @@ seq 100 | sed -n '/^[0-9]\+[02468]\+$\|[02468]\+$/p'
 ```
 
 ## awk
+
+Ferramenta poderosa que ao mesmo tempo é uma linguagem de programação focada em extração e manipulação de textos e números em *streams*, mesclando funcionalidades do `sed` e do `grep`, assim como a linguagem C
+
+**Dica rápida:** o `awk` foi criado em 1977 e vem dos sobrenomes de seus três co-criadores: **A**ho, **W**einberger e **K**ernighan; o Alfred Aho também criou também o `egrep` que implementou a **ERE**.
+
+**Dica rápida:** O `awk` funciona de acordo com a fala de Alfred Aho - "awk lê a entrada uma linha por vez. Uma linha é varrida para cada padrão definido no programa, e para cada padrão que há casamento, a ação correspondente é executada."
+
+A estrutura básica é:
+
+```
+condition { action }
+condition { action }
+```
+
+### Opções úteis:
+
+- `-F {sep}` define o separador de campos, o padrão é espaço
+- `-v {var}={value}` seta alguma variável previamente
+
+**Dica rápida:** O `awk` tem vários sabores mas esse resumo trata principalmente da versão da GNU, o `gawk`
+
+**Dica rápida:** O `awk` foi diretamente influenciado por `grep` e `sed` o que por sua vez influenciou diretamente a linguagem `perl`.
+
+**Dica rápida:** A gramática das expressões regulares é similar à **ERE**
+
+### Variáveis pré-definidas:
+
+- `NR` número de registros
+- `FNR` número de registros do arquivo
+- `NF` número de campos
+- `FILENAME` nome do arquivo
+- `FS` caractere separador de campos, padrão é espaço
+- `RS` caractere separador de registros, padrão é `\n`
+- `OFS` caractere separador de campos de saída
+- `ORS` caractere separador de registros de saída
+- `OFMT` formatação padrão dos números de saída, que é inicialmente `"%.6g"`
+
+### Dicas:
+
+- Variáveis seguem o alfabeto `A-Za-z_`
+- Há suporte para arrays unidimensionais
+- Strings são definidas dentro de aspas-duplas `"abc"`
+- Concatenação de strings é feita simplemente aproximando-as como em `"abc" "def"`
+- Comentários são feitos em linha com a primeira coluna da linha com `#`
+- Declarações não precisam terminar em `;`
+- `{ }` bloco comum
+- `BEGIN { }` executado antes de todos os blocos comuns quando o programa inicia, apenas uma vez
+- `END { }` executado após ter executado todos outros blocos e o programa está para encerrar
+- Funções são definidas usando `function` como `function sum(x, y) { return x + y }`
+- Chamadas de funções também é simplemente `sum(2,3)`
+- Bordas em expressões regulares são definidas com `<` e `>`
+- `a?`, `{n,m}`, `a|b`, `(abc)` e `a+` são suportados e não são escapados (como **ERE**)
 
 ## touch
 
