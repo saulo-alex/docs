@@ -1543,7 +1543,16 @@ touch -d'2024-01-01 00:00:59' arquivoantigo.txt
 touch -a arquivonovo.txt
 ```
 
-## Curiosidades do Bash
+## A linguagem do Bash
+
+### Variáveis
+
+Variáveis no shell corrente não são visíveis por algum script que foi executado nele, para contornar isso é necessário exportar a variável, usando ou `declare -x var` ou `export var`.
+
+Toda variável é tratada como uma string, que caso contenha espaços deve ser envolta por aspas. A única exceção é quando utilizado `declare -i var` que faz `var` se tornar numérica, assim executando expressões que são atribuidas a ela.
+
+#### Expansão de variáveis (ou formalmente, de parâmetros)
+
 
 ### Redireções
 
@@ -1706,7 +1715,7 @@ if true; then echo sucesso; fi
 # note o ';' do else, também é obrigatório em comandos de uma só linha
 if false; then echo falha; else echo sucesso; fi
 # o mesmo visto anteriormente
-if true; then
+if ((1)); then
     echo sucesso
 fi
 # o mesmo visto anteriormente
@@ -1729,13 +1738,57 @@ fi
 
 ## case
 
+`case PALAVRA in [PADRÃO [| PADRÃO]...) COMANDOS ;;]... esac`
+
+### Exemplos:
+
+```bash
+opcao="sim"
+case $opcao in
+    [sS][iI][mM])
+        echo Foi escolhido um sim!
+        ;;
+    [nN][ãaÃA][oO])
+        echo Foi escolhido um não!
+        ;;
+esac
+```
+
 ## for
+
+`for NOME [in PALAVRAs ...] ; do COMANDOS; done`
 
 ## while
 
+`while COMMANDS; do COMMANDS-2; done`
+
 ## until
 
+`until COMMANDS; do COMMANDS-2; done`
+
 ## declare
+
+Útil para declarar múltiplas variáveis de uma vez assim como definir escopo delas e atributos como imutabilidade
+
+### Opções úteis:
+
+- `-g` define variáveis globais quando declaradas em funções; variáveis declaradas sem `-g` em funções são locais!
+- `-r` define um valor constante
+- `-i` define um valor inteiro; toda atribuição a ela será tratada como expressão aritmética
+- `-x` define a variável e em seguida exporta
+
+```bash
+declare -r a="constante"
+# erro
+a=variável
+# b=3 pois ela é inteira (-i)
+declare -i b=1+2
+echo $b
+# declare e exporte
+declare -x term=bash
+# script.sh pode utilizar $term uma vez que ela foi exportada
+./script.sh
+```
 
 ## ${var} - expansão de parâmetros
 
