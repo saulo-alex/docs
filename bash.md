@@ -1471,8 +1471,8 @@ condition { action }
 
 ### Variáveis pré-definidas:
 
-- `NR` número de registros
-- `FNR` número de registros do arquivo
+- `NR` número de registros; é acumulativo, uma vez que não separa entre diferentes arquivos processados
+- `FNR` número de registros do arquivo atual; em `BEGIN` é zero, em `END` é o número de registros
 - `NF` número de campos
 - `FILENAME` nome do arquivo
 - `FS` caractere separador de campos, padrão é espaço
@@ -1480,6 +1480,8 @@ condition { action }
 - `OFS` caractere separador de campos de saída
 - `ORS` caractere separador de registros de saída
 - `OFMT` formatação padrão dos números de saída, que é inicialmente `"%.6g"`
+- `ARGC` e `ARGV` número de argumentos e os argumentos passados ao script
+- `ENVIRON` as variáveis de ambiente do shell
 
 ### Dicas:
 
@@ -1496,6 +1498,29 @@ condition { action }
 - Chamadas de funções também é simplemente `sum(2,3)`
 - Bordas em expressões regulares são definidas com `<` e `>`
 - `a?`, `{n,m}`, `a|b`, `(abc)` e `a+` são suportados e não são escapados (como **ERE**)
+- `str ~ regex` e `str !~ regex` denotam comparação por expressão regular, se `regex` casa ou não com `str`
+- Quase todos os operadores são comuns aos das linguagens derivadas do C, com exceção do `^` que é exponenciação
+- Algumas funções úteis:
+
+    ```awk
+    sin(x) cos(x) atan2(y,x)
+    exp(x) log(x) sqrt(x)
+    int(x) rand()
+    srand([expr])
+
+    gsub(regex, repl[, str]) # substituição global, se não informado str usa $0
+    sub(regex, repl[, str]) # substituição unitária, se não informado str usa $0
+    index(str, t) # busca t em str, indexado a partir de 1
+    length([str]) # tamanho de str ou $0
+    split(str, arr[, fs]) # quebra str em um array de substrings separadas pelo token fs ou FS global
+    tolower(str)
+    toupper(str)
+
+    expr | getline [var] # pega linha via pipe de expr e armazena em $0 ou var
+    getline # pega a linha e armazena em $0
+    getline var < expr # pega a linha de expr e armazena em var
+    system(cmd) # executa comando shell
+    ```
 
 ## touch
 
