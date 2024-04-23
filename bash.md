@@ -1551,16 +1551,20 @@ Variáveis no shell corrente não são visíveis por algum script que foi execut
 
 Toda variável é tratada como uma string, que caso contenha espaços deve ser envolta por aspas. A única exceção é quando utilizado `declare -i var` que faz `var` se tornar numérica, assim executando expressões que são atribuidas a ela.
 
-#### Expansão de variáveis (ou formalmente, de parâmetros)
+### Expansão de parâmetros
 
 
 ### Redireções
 
-Segue o formato básico `descritor[[&]<|>]caminho-para-arquivo`. Sendo o caractere `>` para escrita e `<` para leitura.
+Segue o formato básico `descritor[[&]<|>]caminho-para-arquivo`.
 
-Alguns descritores padronizados: `0` é `stdin` (ou entrada-padrão), `1` é `stdout` (ou saída-padrão) e `2` é `stderr` (ou saída-erro-padrão).
+O caractere `>` é para escrita e o caractere `<` é para leitura.
 
-Toda redireção é avaliada antes de executar o comando, da esquerda para direita, importando a ordem na qual são escritos.
+Por padrão `0` é a `stdin` (ou entrada-padrão), `1` é `stdout` (ou saída-padrão) e `2` é `stderr` (ou saída-erro-padrão).
+
+Toda redireção é avaliada da esquerda para direita, antes de executar o comando.
+
+Os descritores de arquivos estão em `/dev/fd`.
 
 #### Formatos
 
@@ -1572,15 +1576,15 @@ Toda redireção é avaliada antes de executar o comando, da esquerda para direi
 
     `[n]> ARQUIVO`
 
-- Redireção de saída *'apendada'*
+- Anexação de saída
 
     `[n]>> ARQUIVO`
 
-- Redireção da *stdout* e *stderr*
+- Redireção conjunta (`stdout` e `stderr`)
 
     `&> ARQUIVO` (ou `>& ARQUIVO`, ou também `> ARQUIVO 2>&1`)
 
-- Redireção da *stdout* e *stderr* *'apendada'*
+- Anexação conjunta (`stdout` e `stderr`)
 
     `&>> ARQUIVO` (ou `>> ARQUIVO 2>&1`)
 
@@ -1592,9 +1596,7 @@ Toda redireção é avaliada antes de executar o comando, da esquerda para direi
     DELIMITADOR
     ```
 
-    Por padrão, dentro do texto as variáveis serão interpoladas
-
-    O delimitador pode vir entre aspas simples `'DELIMITADOR'`, dessa forma não haverá interpolação no texto
+    Por padrão, as variáveis no texto serão interpoladas, a menos que o delimitador seja no formato de aspas simples: `'DELIMITADOR'`
 
     O delimitador final não pode ser antecedido por nenhum caractere, ou seja, ele deve começar na primeira coluna
 
@@ -1606,19 +1608,33 @@ Toda redireção é avaliada antes de executar o comando, da esquerda para direi
 
     O texto sempre conterá o `\n` final
 
-- Duplicação de descritores
+    **Dica rápida:** Se `n` não for informado subentende `0`
 
-    `[n]<& ARQUIVO` para entrada
+- Duplicação de descritor
 
-    `[n]>& ARQUIVO` para saída
+    `[n]<& ARQUIVO`
 
-- Transferência de descritores
+    **Dica rápida:** Se `n` não for informado subentende `0`
+
+    `[n]>& ARQUIVO`
+
+    **Dica rápida:** Se `n` não for informado subentende `1`
+
+    **Dica rápida:** ARQUIVO pode ser avaliado como `-` ou como algum caminho válido, porém se for avaliado como um `-` ele fecha o descritor `n`
+
+    **Dica rápida:** Para abrir um descritor faça `exec [n]> ARQUIVO`, `exec [n]< ARQUIVO` ou `exec [n]<> ARQUIVO` para abrir para escrita, para leitura e para leitura e escrita respectivamente, onde `n` é o descritor
+
+    **Dica rápida:** E como dito acima, para fechar `exec [n]>&-` onde `n` é o descritor
+
+- Transferência de descritor
 
     `[n]<&[m]-` transfere o descritor `m` para `n` e fecha `m`
 
+    **Dica rápida:** Se `n` não for informado subentende `0`
+
     `[n]>&[m]-` transfere o descritor `m` para `n` e fecha `m`
 
-    Note que o `-` serve para fechar o descritor e serve para qualquer sintaxe de redireção, não apenas sendo usado em transferência
+    **Dica rápida:** Se `n` não for informado subentende `1`
 
 - Abertura de descritor para leitura e escrita
 
@@ -1627,22 +1643,24 @@ Toda redireção é avaliada antes de executar o comando, da esquerda para direi
 #### Exemplos
 
 ```bash
-# stdout agora é arq
+# stdout é desviada para arq
 echo 1+1 >arq
-# stdin agora é arq 
+# stdin é o arq 
 bc <arq
-# stderr agora é /dev/null (descarta)
+# stderr é desviada para /dev/null (descarta)
 ls nao-existo 2>/dev/null
 # here-document é o stdin de cat que por sua tem seu stdout conectado a stdin de python
-cat <<FIM | python
+cat <<'FIM' | python
 print('Ok from Python')
 FIM
-# stdout e stderr são agora arq
+# stdout e stderr são desviados para arq
 ls -R /opt &>arq
 # stdin é a string 1+2
 bc <<<1+2
-# stdout é arq e escreve no fim dele
+# stdout é desviado como anexo em arq
 echo a >>arq
+#
+ls 2>&/dev/null
 ```
 
 ### Pontos gerais
@@ -1705,7 +1723,7 @@ echo 'a;b;c' | cut -d';' -f2-
 
 ## if
 
-`if COMANDOS; then COMANDOS; [ elif COMANDOS; then COMANDOS; ]... [ else COMANDOS; ] fi`
+`if LISTA; then LISTA; [ elif LISTA; then LISTA; ]... [ else LISTA; ] fi`
 
 ### Exemplos:
 
@@ -1738,7 +1756,7 @@ fi
 
 ## case
 
-`case PALAVRA in [PADRÃO [| PADRÃO]...) COMANDOS ;;]... esac`
+`case PALAVRA in [PADRÃO [| PADRÃO]...) LISTA ;;]... esac`
 
 ### Exemplos:
 
@@ -1754,17 +1772,32 @@ case $opcao in
 esac
 ```
 
+## select
+
+Comando iterativo, permitindo o usuário escolher uma dentre várias opções informadas
+
+Uma vez executado, o comando precisa encontrar algum `break` para sair dele, se não irá repetir até que o usuário informe `C-d` (fim-de-linha)!
+
+`select NOME [ in PALAVRA ]; do LISTA; ...break; done`
+
+```bash
+select fruta in {maçã,uva,pêra,banana,abacate}; do
+    echo "Você escolheu $fruta"
+    break
+done
+```
+
 ## for
 
-`for NOME [in PALAVRAs ...] ; do COMANDOS; done`
+`for NOME [ in PALAVRAS ... ] ; do LISTA; done`
 
 ## while
 
-`while COMMANDS; do COMMANDS-2; done`
+`while LISTA1; do LISTA2; done`
 
 ## until
 
-`until COMMANDS; do COMMANDS-2; done`
+`until LISTA1; do LISTA2; done`
 
 ## declare
 
