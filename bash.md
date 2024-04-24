@@ -1672,13 +1672,159 @@ ls 2>&/dev/null
 
 ### Tipos de comandos
 
-- Simples: apenas um comando com seus argumentos e opcionalmente redireções.
-- Pipeline: uma sequência de comandos conectados por `|` ou `|&`, na qual a *stdout* do primeiro é redirecionada a *stdin* do segundo, e assim sucessivamente. Usando `|&` a *stderr* também é redirecionada para a *stdout* (ou seja, é um atalho para `2>&1`). O valor de retorno do pipeline é dado pelo último comando. Cada comando no pipeline é executado em subshell (processo separado, que duplica o shell pai, ou original).
-- Lista: uma sequência de pipelines separados separados por `;`, `&` (joga para *background* e executa em subshell), `&&` (*and*, executa apenas se o primeiro for bem-sucedido) ou `||` (*or*, executa apenas se o primeiro for mal-sucedido) e opcionalmente terminado por `;`, `&` ou `\n`. O valor de retorno da lista é dado pelo último comando.
-- Composto: segue alguma das estruturas: `(LISTA)`, `{ LISTA; }`, `((EXPR))`, `[[EXPR]]`, `for NOME [ [ in [ PALAVRA ... ] ] ; ] do LISTA ; done`, `for (( EXPR1 ; EXPR2 ; EXPR3 )) ; do LISTA ; done`, `select name [ in PALAVRA ] ; do LISTA ; done`, `case PALAVRA in [ [(] PADRAO [ | PADRAO ] ... ) LISTA ;; ] ... esac`, `if LISTA; then LISTA; [ elif LISTA; then LISTA; ] ... [ else LISTA; ] fi`, `while LISTA-1; do LISTA-2; done` ou `until LISTA-1; do LISTA-2; done`.
-    - `(LISTA)` - é executado em subshell; o último comando da lista dá o valor de retorno
-    - `{ LISTA; }` - conhecido como *comando de grupo*; é executado no shell atual; LISTA deve terminar ou com `;` ou `\n`; o último comando da lista dá o valor de retorno; pode ser aninhado; note que o espaço entre `LISTA;` e as chaves é obrigatório
-    - `((EXPR))` - avalia a expressão no shell atual e retorna `0` se o resultado for diferente de zero e `1` caso contrário; tudo na expressão é tratado como se estivesse entre aspas duplas; não há necessidade de prefixar variáveis com `$`.
+- **Simples**: um comando com seus argumentos e opcionalmente redireções.
+
+- **Pipeline**: uma sequência de comandos conectados por `|` ou `|&`, na qual a `stdout` do primeiro é canalizada a `stdin` do segundo, e assim sucessivamente. Usando `|&` a `stderr` também é canalizada para a `stdout` (é um atalho para `2>&1`). O valor de retorno do pipeline é dado pelo último comando. Cada comando no pipeline é executado em subshell (um shell que herda o shell corrente e roda em separado).
+
+- **Lista**: uma sequência de comandos simples e/ou pipelines separados por um dos operadores `;`, `&`, `&&` ou `||`  e opcionalmente terminado por `;`, `&` ou `\n`. O valor de retorno da lista é dado pelo último comando.
+
+    - O operador `&` faz o comando que o precede rodar em *background*
+
+    > Uma vez o processo em background para retornar a ele execute `jobs` para procurar o `id` dele e faça `fg {id}`; para retonar ao shell ele precisa ir ao estado de parado, para isso tecle `C-z`; se quiser que ele volte a executar, porém no background faça `bg {id}`
+
+    > Qualquer processo pode ser colocado em background, a menos que ele rejeite isso explicitamente no seu código
+
+    - O operador `&&` faz o comando que o sucede rodar somente se o que o precede for bem-sucedido
+    - O operador `||` faz o comando que o sucede rodar somente se o que o precede for mal-sucedido
+
+    > Os operadores `&&` e `||` tem igual precedência e é maior que a dos outros operadores `&` e `;`.
+
+- **Composto**: formam o que o shell fornece como suporte de sua linguagem de programação:
+
+    **Condicionais**
+
+    O comando **`if`** segue a estrutura:
+
+    `if LISTA; then LISTA; [ elif LISTA; then LISTA; ] ... [ else LISTA; ] fi`
+
+    Exemplos: 
+
+    ```bash
+    # note o ';' na parte que finaliza o then, é obrigatório em comandos de uma só linha
+    if true; then echo sucesso; fi
+    # note o ';' do else, também é obrigatório em comandos de uma só linha
+    if false; then echo falha; else echo sucesso; fi
+    # o mesmo visto anteriormente
+    if ((1)); then
+        echo sucesso
+    fi
+    # o mesmo visto anteriormente
+    if false; then
+        echo falha
+    else
+        echo sucesso
+    fi
+    # com elif
+    if false; then
+        echo falha de primeira
+    elif false; then
+        echo falha de segunda
+    elif true; then
+        echo sucesso de terceira
+    else
+        echo falha por último
+    fi
+    ```
+
+    O comando **`case`** segue a estrutura:
+
+    `case PALAVRA in [ [(] PADRAO [ | PADRAO ] ... ) LISTA ;; ] ... esac`
+
+    Exemplos:
+
+    ```bash
+    opcao="sim"
+    case $opcao in
+        [sS][iI][mM])
+            echo Foi escolhido um sim!
+            ;;
+        [nN][ãaÃA][oO])
+            echo Foi escolhido um não!
+            ;;
+    esac
+    ```
+
+    O comando **`select`** segue a estrutura:
+
+    `select name [ in PALAVRA ] ; do LISTA ; done`
+
+    Comando iterativo, permitindo o usuário escolher uma dentre várias opções informadas
+
+    Uma vez executado, o comando precisa encontrar algum `break` para sair dele, se não irá repetir até que o usuário informe `C-d` (fim-de-linha)!
+
+    `select NOME [ in PALAVRA ]; do LISTA; ... break; done`
+
+    ```bash
+    select fruta in {maçã,uva,pêra,banana,abacate}; do
+        echo "Você escolheu $fruta"
+        break
+    done
+    ```
+
+    O comando **`((...))`** segue a estrutura:
+
+    `((EXPR))`
+
+    Avalia a expressão no shell atual e retorna `0` se o resultado for diferente de zero e `1` caso contrário; tudo na expressão é tratado como se estivesse entre aspas duplas; não há necessidade de prefixar variáveis com `$`.
+
+    O comando **`[[...]]`** segue a estrutura:
+
+    `[[EXPR]]`
+
+    Avalia a expressão (ou expressões) e retorna o valor exato da avaliação: `0` ou `1`.
+
+    Expressões podem ser combinadas usando `&&` e `||`: `[[ 2 < 3 && 3 > 5 || 2 > 0 ]]` retorna `0` uma vez que `||` tem menor precedência que `&&`
+
+    É necessário prefixar as variáveis
+
+    Pode conter expressões que serão expandidas pelo shell como `COMANDOS`, `$(COMANDOS)`, `~` (ou `~+`, `~-`, `~:`), `<(COMANDOS)`, `>(COMANDOS)`, sendo que as variáveis delas serão tratadas como se estivesse entre aspas duplas
+
+    Os operadores `<` e `>` usam o locale para comparar cadeias
+
+    O operador `==` e `!=` serve para comparar cadeias tratando como se o operando da direita tivesse o `extglob` habilitado
+
+    O operador `=~` verifica se o padrão da direita (usando a sintaxe extendida `grep -E`) casa com a cadeia da esquerda; tem a mesma precedência de `==` e `!=`
+
+    Exemplos:
+
+    ```bash
+    # comando simples
+    ls -R /tmp >/dev/null 2>&1
+    # comando em pipeline
+    echo 'a;b;c' | cut -d';' -f2-
+    ```
+
+    **Loops**
+
+    O comando **`for`** segue a estrutura:
+
+    `for NOME [ [ in [ PALAVRA ... ] ] ; ] do LISTA ; done`
+
+    Alternativamente, o **`for`** pode ter outra forma:
+
+    `for (( EXPR1 ; EXPR2 ; EXPR3 )) ; do LISTA ; done`
+
+    O comando **`while`** segue a estrutura:
+
+    `while LISTA-1; do LISTA-2; done`
+
+    O comando **`until`** segue a estrutura:
+
+    `until LISTA-1; do LISTA-2; done`
+
+    **Agrupamentos**
+
+    O agrupador **`(...)`** segue a estrutura:
+
+    `(LISTA)`
+
+    É executado em subshell; o último comando da lista dá o valor de retorno
+
+    O agrupador **`{...}`** segue a estrutura:
+
+    `{ LISTA; }`
+
+    Conhecido como *comando de grupo*; é executado no shell atual; LISTA deve terminar ou com `;` ou `\n`; o último comando da lista dá o valor de retorno; pode ser aninhado; note que o espaço entre `LISTA;` e as chaves é obrigatório
 
         ```
          Operadores:
@@ -1705,99 +1851,6 @@ ls 2>&/dev/null
          expr1, expr2 operador vírgula
         ```
 
-    - `[[EXPR]]` - avalia a expressão (ou expressões) e retorna o valor exato da avaliação (`0` ou `1`).
-        - Expressões podem ser combinadas usando `&&` e `||`: `[[ 2 < 3 && 3 > 5 || 2 > 0 ]]` retorna `0` uma vez que `||` tem menor precedência que `&&`
-        - É necessário prefixar as variáveis
-        - Pode conter expressões que serão expandidas pelo shell como `COMANDOS`, `$(COMANDOS)`, `~` (ou `~+`, `~-`, `~:`), `<(COMANDOS)`, `>(COMANDOS)`, sendo que as variáveis delas serão tratadas como se estivesse entre aspas duplas
-        - Os operadores `<` e `>` usam o locale para comparar cadeias
-        - O operador `==` e `!=` serve para comparar cadeias tratando como se o operando da direita tivesse o `extglob` habilitado
-        - O operador `=~` verifica se o padrão da direita (usando a sintaxe extendida `grep -E`) casa com a cadeia da esquerda; tem a mesma precedência de `==` e `!=`
-    - Demais comandos tratados mais à frente
-
-```bash
-# comando simples
-ls -R /tmp >/dev/null 2>&1
-# comando em pipeline
-echo 'a;b;c' | cut -d';' -f2-
-```
-
-## if
-
-`if LISTA; then LISTA; [ elif LISTA; then LISTA; ]... [ else LISTA; ] fi`
-
-### Exemplos:
-
-```bash
-# note o ';' na parte que finaliza o then, é obrigatório em comandos de uma só linha
-if true; then echo sucesso; fi
-# note o ';' do else, também é obrigatório em comandos de uma só linha
-if false; then echo falha; else echo sucesso; fi
-# o mesmo visto anteriormente
-if ((1)); then
-    echo sucesso
-fi
-# o mesmo visto anteriormente
-if false; then
-    echo falha
-else
-    echo sucesso
-fi
-# com elif
-if false; then
-    echo falha de primeira
-elif false; then
-    echo falha de segunda
-elif true; then
-    echo sucesso de terceira
-else
-    echo falha por último
-fi
-```
-
-## case
-
-`case PALAVRA in [PADRÃO [| PADRÃO]...) LISTA ;;]... esac`
-
-### Exemplos:
-
-```bash
-opcao="sim"
-case $opcao in
-    [sS][iI][mM])
-        echo Foi escolhido um sim!
-        ;;
-    [nN][ãaÃA][oO])
-        echo Foi escolhido um não!
-        ;;
-esac
-```
-
-## select
-
-Comando iterativo, permitindo o usuário escolher uma dentre várias opções informadas
-
-Uma vez executado, o comando precisa encontrar algum `break` para sair dele, se não irá repetir até que o usuário informe `C-d` (fim-de-linha)!
-
-`select NOME [ in PALAVRA ]; do LISTA; ...break; done`
-
-```bash
-select fruta in {maçã,uva,pêra,banana,abacate}; do
-    echo "Você escolheu $fruta"
-    break
-done
-```
-
-## for
-
-`for NOME [ in PALAVRAS ... ] ; do LISTA; done`
-
-## while
-
-`while LISTA1; do LISTA2; done`
-
-## until
-
-`until LISTA1; do LISTA2; done`
 
 ## declare
 
@@ -1822,6 +1875,4 @@ declare -x term=bash
 # script.sh pode utilizar $term uma vez que ela foi exportada
 ./script.sh
 ```
-
-## ${var} - expansão de parâmetros
 
