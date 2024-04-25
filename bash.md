@@ -1730,6 +1730,8 @@ ls 2>&/dev/null
 
     `case PALAVRA in [ [(] PADRAO [ | PADRAO ] ... ) LISTA ;; ] ... esac`
 
+    Similar ao `switch` de linguagens derivadas do C, expande `PALAVRA` que normalmente é uma variável, e verifica cada uma das opções dado por `PADRAO` afim de encontrar um casamento, caso havendo executando `LISTA` que deve terminar obrigatoriamente `;;`, não sendo parte dela mas do `case`
+
     Exemplos:
 
     ```bash
@@ -1746,9 +1748,9 @@ ls 2>&/dev/null
 
     O comando **`select`** segue a estrutura:
 
-    `select name [ in PALAVRA ] ; do LISTA ; done`
+    `select NOME [ in PALAVRA ] ; do LISTA ; done`
 
-    Comando iterativo, permitindo o usuário escolher uma dentre várias opções informadas
+    Gera um menu iterativo com opções de escolha pelo usuário sendo cada termo provindo da expansão de `PALAVRA`
 
     Uma vez executado, o comando precisa encontrar algum `break` para sair dele, se não irá repetir até que o usuário informe `C-d` (fim-de-linha)!
 
@@ -1773,9 +1775,9 @@ ls 2>&/dev/null
 
     Avalia a expressão (ou expressões) e retorna o valor exato da avaliação: `0` ou `1`.
 
-    Expressões podem ser combinadas usando `&&` e `||`: `[[ 2 < 3 && 3 > 5 || 2 > 0 ]]` retorna `0` uma vez que `||` tem menor precedência que `&&`
+    Diferentemente do comando `test` (ou `[]`) as expressões podem ser combinadas usando `&&` e `||`: `[[ 2 < 3 && 3 > 5 || 2 > 0 ]]` retorna `0` uma vez que `||` tem menor precedência que `&&`
 
-    É necessário prefixar as variáveis
+    É necessário prefixar as variáveis!
 
     Pode conter expressões que serão expandidas pelo shell como `COMANDOS`, `$(COMANDOS)`, `~` (ou `~+`, `~-`, `~:`), `<(COMANDOS)`, `>(COMANDOS)`, sendo que as variáveis delas serão tratadas como se estivesse entre aspas duplas
 
@@ -1800,17 +1802,25 @@ ls 2>&/dev/null
 
     `for NOME [ [ in [ PALAVRA ... ] ] ; ] do LISTA ; done`
 
+    Para cada termo a ser consumido da expansão de `PALAVRA`, armazene em `NOME` e execute `LISTA`
+
     Alternativamente, o **`for`** pode ter outra forma:
 
     `for (( EXPR1 ; EXPR2 ; EXPR3 )) ; do LISTA ; done`
+
+    Loop ao estilo C e derivados, precisa explicar? Note que qualquer `EXPR` não precisar levar o prefixo `$` na variável
 
     O comando **`while`** segue a estrutura:
 
     `while LISTA-1; do LISTA-2; done`
 
+    Executa os comandos de `LISTA-2` enquanto `LISTA-1` retornar um valor igual de zero
+
     O comando **`until`** segue a estrutura:
 
     `until LISTA-1; do LISTA-2; done`
+
+    Executa os comandos de `LISTA-2` enquanto `LISTA-1` retornar um valor diferente de zero
 
     **Agrupamentos**
 
@@ -1824,17 +1834,34 @@ ls 2>&/dev/null
 
     `{ LISTA; }`
 
-    Conhecido como *comando de grupo*; é executado no shell atual; LISTA deve terminar ou com `;` ou `\n`; o último comando da lista dá o valor de retorno; pode ser aninhado; note que o espaço entre `LISTA;` e as chaves é obrigatório
+     É executado no shell atual; LISTA deve terminar ou com `;` ou `\n`; o último comando da lista dá o valor de retorno; pode ser aninhado; note que o espaço entre `LISTA;` e as chaves é obrigatório
 
-        ```
-         Operadores:
+### Operadores
 
-         a++ a-- pós incremento
-         -a +a menos unário, mais unário
-         ++a --a pré incremento
-         ! negação lógica
-         ~ negação bit a bit
-         ** exponenciação
+- `a++` e `a--`
+
+    Pós-incrementos
+
+- `-a` e `+a`
+
+    Sinais de menos e mais unários
+
+- `++a` e `--a`
+
+    Pré-incrementos
+
+- `!expr`
+
+    Negação lógica
+
+- `~a`
+
+    Negação bit a bit
+
+- `a**b`
+
+    Exponenciação
+
          * / % multiplicação divisão resto
          + - adição subtração
          >> << deslocamento à direita bit a bit, deslocamento à esquerda bit a bit
