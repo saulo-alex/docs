@@ -1547,11 +1547,92 @@ touch -a arquivonovo.txt
 
 ### Variáveis
 
-Variáveis no shell corrente não são visíveis por algum script que foi executado nele, para contornar isso é necessário exportar a variável, usando ou `declare -x var` ou `export var`.
+Variáveis são setadas via `{var}={value}` (forma tradicional) ou `declare {var}={value}`
 
-Toda variável é tratada como uma string, que caso contenha espaços deve ser envolta por aspas. A única exceção é quando utilizado `declare -i var` que faz `var` se tornar numérica, assim executando expressões que são atribuidas a ela.
+Por sua vez, podem ser limpas via `unset {var}`
 
-### Expansão de parâmetros
+Toda variável é manipulada como string embora usando `declare` é possível usá-la como inteiro
+
+Em funções ou no próprio script, há algumas variáveis pré-definidas:
+
+- `$0` o nome da função ou do script
+- `$1` até `$9` o 1º até o 9º argumento; argumentos acima são acessados via expansão `${10}`
+- `$*` expande para todos os argumentos a partir de `$1` separados por espaços a menos que esteja entre aspas duplas que são separadados pelo caractere em IFS
+- `$@` o mesmo acima porém despreza o conteúdo de IFS como separador
+- `$#` o número de parâmetros
+- `$?` o retorno (`status code`) do último comando executado
+- `$$` o PID do shell; em subshell retorna o do pai
+- `$!` o PID do último job executado em background
+
+Usando o comando **`declare`**:
+
+Algumas vantagens sobre a forma tradicional de declaração:
+
+- Melhora a legibilidade
+- Permitir definir atributos das variáveis
+- Permite múltiplas declarações ao mesmo tempo
+- Permite atribuições conjuntamente com a declaração
+- Permite valores constantes
+- Permite valores locais
+- Permite declarar e ao mesmo tempo exportar
+
+Algumas opções:
+
+- `-g` define variáveis globais quando declaradas em funções; variáveis declaradas sem `-g` em funções são locais!
+- `-r` define um valor constante
+- `-i` define um valor inteiro; toda atribuição a ela será tratada como expressão aritmética
+- `-x` define a variável e em seguida exporta
+
+```bash
+declare -r a="constante"
+# erro
+a=variável
+# b=3 pois ela é inteira (-i)
+declare -i b=1+2
+echo $b
+# declare e exporte
+declare -x term=bash
+# script.sh pode utilizar $term uma vez que ela foi exportada
+./script.sh
+```
+
+### Expansões
+
+Há sete tipos de expansões executadas pelo shell:
+
+- Expansão de chaves
+- Expansão de til
+- Expansão de parâmetros e variáveis
+- Expansão de comandos
+- Expansão aritmética
+- Quebra de palavras
+- Expansão de nome de arquivo
+
+#### Expansão de chaves
+
+É um mecanismo parar gerar strings arbitrárias, através de `{}`
+
+Primeiro formato segue os exemplos:
+
+```bash
+# gera as strings ab.ef abcef abdef
+echo ab{.,c,d}ef
+# gera as strings a b c
+echo {a,b,c}
+```
+
+Segundo formato segue os exemplos:
+
+```bash
+# gera as strings a b c d e ... z
+echo {a..z}
+# gera as strings a d g j ... z
+echo {a..z..3}
+# gera as strings 0 10 20 30 ... 100
+echo {0..100..10}
+# gera as strings 1 2 3 4 5 ... 10
+echo {1..10}
+```
 
 
 ### Redireções
@@ -1858,48 +1939,51 @@ ls 2>&/dev/null
 
     Negação bit a bit
 
-- `a**b`
+- `a ** b`
 
     Exponenciação
 
-         * / % multiplicação divisão resto
-         + - adição subtração
-         >> << deslocamento à direita bit a bit, deslocamento à esquerda bit a bit
-         <= < >= > comparação
-         == != igualdade, inequidade
-         & operação E bit a bit
-         | operação OU bit a bit
-         ^ operação XOR bit a bit
-         && operação E lógico
-         || operação OU lógico
-         expr1 ? expr2 : expr3 if ternário
-         = atribuição
-         *= /= %= += -= <<= >>= &= ^= |= atribuições compostas
-         expr1, expr2 operador vírgula
-        ```
+- `a * b`, `a / b` e `a % b`
 
+    Multiplicação, divisão e módulo
 
-## declare
+- `a + b` e `a - b`
 
-Útil para declarar múltiplas variáveis de uma vez assim como definir escopo delas e atributos como imutabilidade
+    Soma e subtração
 
-### Opções úteis:
+- `a >> b` e `a << b`
 
-- `-g` define variáveis globais quando declaradas em funções; variáveis declaradas sem `-g` em funções são locais!
-- `-r` define um valor constante
-- `-i` define um valor inteiro; toda atribuição a ela será tratada como expressão aritmética
-- `-x` define a variável e em seguida exporta
+    Deslocamento de bits à direita e à esquerda
 
-```bash
-declare -r a="constante"
-# erro
-a=variável
-# b=3 pois ela é inteira (-i)
-declare -i b=1+2
-echo $b
-# declare e exporte
-declare -x term=bash
-# script.sh pode utilizar $term uma vez que ela foi exportada
-./script.sh
-```
+- `a <= b`, `a < b`, `a >= b` e `a > b`
+
+    Comparações menor-ou-igual, menor, maior-ou-igual, maior
+
+- `a == b` e `a != b`
+
+    Comparações de igualdade e diferença
+
+- `a & b`, `a | b` e `a ^ b`
+
+    Operações AND, OR e XOR bit a bit
+
+- `a && b` e `a || b`
+
+    Comparações lógicas
+
+- `a ? b : c`
+
+    if ternário
+
+- `a = b`
+
+    Atribuição
+
+- `a *= b`, `a /= b`, `a %= b`, `a += b`, `a -= b`, `a <<= b`, `a >>= b`, `a &= b`, `a ^= b` e `a |= b`
+
+    Atribuições compostas
+
+- `a, b`
+
+    Operador vírgula
 
