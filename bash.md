@@ -1634,6 +1634,63 @@ echo {0..100..10}
 echo {1..10}
 ```
 
+#### Expansão de til
+
+É um mecanismo para facilitar o acesso a certos diretórios, através de `~`
+
+Por padrão, o `~` é expandido para o conteúdo de `$PWD`
+
+Caso seja `~-` o conteúdo é expandido para o `$OLDPWD`, que é o último diretório antes do `$PWD`
+
+O `$PWD` também pode ser acessado via `$+`
+
+Se o termo após o til for um nome de usuário, ele expande para o caminho do home desse usuário
+
+```bash
+# expande para /root
+echo ~root
+# expande para /home/saulo se o usuário for logado for saulo
+echo ~
+# expande para /home/paulo/Pictures
+echo ~paulo/Pictures
+# vai para /usr depois /tmp e volta com para /usr com ~-
+cd /usr; cd /tmp; cd ~-;
+```
+
+#### Expansão de parâmetros e variáveis
+
+O primeiro uso é para acessar mais que nove parâmetros posicionais: `${10}` ou `${22}`
+
+O segundo uso é para proteger de mal-interpretação do nome da variável: `echo ${var}var`
+
+Outros usos são:
+
+- `${var:-TEXTO}` se `$var` for nula ou limpa (via `unset`) `TEXTO` é expandido para `stdout` mas não atribui a ela, senão usa o valor dela
+
+- `${var:=TEXTO}` o mesmo acima, porém atribue a `$var` caso seja nula ou limpa senão usa o valor dela; é o valor padrão
+
+- `${var:?TEXTO}` se `$var` for nula ou limpa `TEXTO` é expandido para a `stderr` com uma mensagem de erro, senão usa o valor dela
+
+- `${var:+TEXTO}` se `$var` for nula ou limpa não faz nada, senão `TEXTO` é expandido para `stdout`
+
+- `${var:OFFSET}` e `${var:OFFSET:LENGTH}` são formas de obter a substring da variável; para `OFFSET` negativo separe de var com um espaço para não ter ambiguidade com `{var:-TEXTO}`, ex: `${var: -5:2}`; se `$var` for um array para para acessar suas posições é necessário indexá-la por `@` ou `*`, ex: `${arr[@]:5:3}`
+
+- `${!PREFIXO*}` expande para o nome de todas as variáveis no shell que tem prefixo `PREFIXO` separados pelo caractere em `$IFS`
+
+- `${!PREFIXO@}` o mesmo acima, porém expande cada nome dentro de aspas duplas
+
+- `${!var[@]` ou `${!var[*]}` sendo `$var` um array irá expandir para uma lista dos índices em que há valore não-nulos atribuídos; usando `@` a expansão é feita dentro de aspas duplas
+
+- `${#var}` sendo `$var` um array expande para o tamanho dele; se `var` for `*` ou `@` expande para o número de parâmetros
+
+- `${var#TEXTO}` expande `TEXTO` e remove a menor substring que casa no início dentro de `$var`; se `var` for `*` ou `@` é aplicado à cada parâmetro posicional, resultando em uma lista; `TEXTO` pode ser um `glob`!
+
+- `${var##TEXTO}` o mesmo acima, porém remove a maior substring
+
+- `${var%TEXTO}` expande `TEXTO` e remove a menor substring que casa no fim dentro de `$var`; se `var` for `*` ou `@` é aplicado à cada parâmetro posicional, resultando em uma lista; `TEXTO` pode ser um `glob`!
+
+- `${var%%TEXTO}` o mesmo acim, porém busca a maior substring
+
 
 ### Redireções
 
