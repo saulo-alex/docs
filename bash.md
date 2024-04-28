@@ -1713,11 +1713,15 @@ Outros usos são:
 
 Expande o conteúdo interpretando como um comando do shell e substitue por sua saída
 
-Há apenas duas formas: a antiga `cmd` e a moderna `$(cmd)`
+Há apenas duas formas: a antiga \``cmd`\` e a moderna `$(cmd)`
 
 A execução ocorre em subshell
 
 Note que `$(cat ARQUIVO)` é mais LENTO que `$(< ARQUIVO)` (usando diretamente na expansão)
+
+```bash
+echo `ls -1 *.txt`
+```
 
 #### Expansão aritmética
 
@@ -1733,6 +1737,27 @@ a=10
 echo $((a * 2 + 3))
 # 5
 echo $((a / 2))
+# 16
+let a=2 * 3 + 10
+echo $a
+# 9
+declare -i a='2 * 6 - 3'
+echo $a
+```
+
+#### Quebra de palavras
+
+O shell quando faz a expansão utiliza o caractere em `$IFS` para determinar as palavras ou termos gerados. Por padrão é o branco, que é definido como `IFS=$' \t\n'`.
+
+```bash
+# define manualmente os parâmetros do shell
+set entrada=/usr/share/docs/file.txt saida=/usr/share/docs/file.pdf
+# coleta os argumentos no formato key=value
+for arg in "$@"; do
+    # IFS é o caractere =, dessa forma $arg é expandido para tokens separados por =
+    IFS='=' read -r key value <<< "$arg"
+    echo "Chave: $key; Valor: $value"
+done
 ```
 
 ### Redireções
