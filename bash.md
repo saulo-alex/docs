@@ -1691,6 +1691,49 @@ Outros usos são:
 
 - `${var%%TEXTO}` o mesmo acim, porém busca a maior substring
 
+- `${var/PADRAO/SUBST}` expande `PADRAO` e o busca em `$var` substituindo na primeira ocorrência por `SUBST`; O formato de busca suportado aceita o padrão `glob`, como `*`, (qualquer caractere) `?` (um caractere), `[...]` (lista) e o padrão `extglob` como `?(PADRAO)` (zero ou uma ocorrência de `PADRAO`), `*(PADRAO)` (zero ou mais ocorrências de `PADRAO`), `+(PADRAO)` (uma ou mais ocorrências de `PADRAO`), `@(PADRAO)` (uma única ocorrência de `PADRAO`), `!(PADRAO)` (qualquer coisa exceto `PADRAO`); `extglob` é ativo no shell mas não em script por padrão
+
+- `${var//PADRAO/SUBST}` o mesmo acima porém substitue em todas as ocorrências
+
+- `${var/#PADRAO/SUBST}` expande `PADRAO` e o busca no início de `$var`, substituindo na primeira ocorrência por `SUBST`
+
+- `${var/%PADRAO/SUBST}` o mesmo acima porém busca no fim de `$var`; em todos os casos acima `PADRAO` pode ser vazio, nesse caso deletaria o padrão em `$var`
+
+- `${var^}` converte o primeiro caractere de `$var` em maiúsculo
+
+- `${var^^}` converte todos os caracteres de `$var` para maiúsculo
+
+- `${var,}` converte o primeiro caractere de `$var` para minúsculo
+
+- `${var,,}` converte todos os caracteres de `$var` para minúsculo
+
+- `${var@OPERATOR}` converte os caracteres de `$var` de acordo com o valor de `OPERATOR` que pode ser: `U` (todos vão para maiúsculo), `u` (o primeiro para minúsculo), `L` (todos vão para minúsculo), `Q` (coloca o valor entre aspas duplas), `k` com `var` sendo indexada por `@` ou `*` expande para a string de pares chave-valor separados por espaço, `K` o mesmo do anterior porém entre aspas duplas no valor
+
+#### Expansão de comandos
+
+Expande o conteúdo interpretando como um comando do shell e substitue por sua saída
+
+Há apenas duas formas: a antiga `cmd` e a moderna `$(cmd)`
+
+A execução ocorre em subshell
+
+Note que `$(cat ARQUIVO)` é mais LENTO que `$(< ARQUIVO)` (usando diretamente na expansão)
+
+#### Expansão aritmética
+
+Expande para o valor da resolução aritmética seguindo as regras de `((expr))`, ou usando `let` ou mesmo usando `declare -i`.
+
+A sintaxe padrão é `$((expr))`
+
+Exemplos:
+
+```bash
+a=10
+# 23
+echo $((a * 2 + 3))
+# 5
+echo $((a / 2))
+```
 
 ### Redireções
 
