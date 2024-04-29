@@ -1745,7 +1745,7 @@ Outros usos são:
 
 - `${var,,}` converte todos os caracteres de `$var` para minúsculo
 
-- `${var@OPERATOR}` converte os caracteres de `$var` de acordo com o valor de `OPERATOR` que pode ser: `U` (todos vão para maiúsculo), `u` (o primeiro para minúsculo), `L` (todos vão para minúsculo), `Q` (coloca o valor entre aspas duplas), `k` com `var` sendo indexada por `@` ou `*` expande para a string de pares chave-valor separados por espaço, `K` o mesmo do anterior porém entre aspas duplas no valor
+- `${var@OPERATOR}` converte os caracteres de `$var` de acordo com o valor de `OPERATOR` que pode ser: `U` (todos vão para maiúsculo), `u` (o primeiro para minúsculo), `L` (todos vão para minúsculo), `Q` (coloca o valor entre aspas duplas), `k` com `var` sendo um array e indexado por `@` ou `*` expande para a string de pares chave-valor separados por espaço, `K` o mesmo do anterior porém entre aspas duplas no valor
 
 #### Expansão de comandos
 
