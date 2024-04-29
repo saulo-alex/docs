@@ -1598,15 +1598,53 @@ declare -x term=bash
 
 ### Expansões
 
-Há sete tipos de expansões executadas pelo shell:
+O shell utiliza o mecanismo de expansão para gerar um conjunto de strings que serão utilizados como argumentos para comandos. As expansões são:
 
 - Expansão de chaves
 - Expansão de til
 - Expansão de parâmetros e variáveis
 - Expansão de comandos
 - Expansão aritmética
-- Quebra de palavras
-- Expansão de nome de arquivo
+- Expansão por substituição de processos
+
+Em todas expansões é possível utilizar curingas (da lib `glob`):
+
+- `*` expande para zero ou mais caracteres
+- `?` expande para um caractere apenas
+- `[...]` expande para um caractere da lista de caracteres informada; intervalos e classes de caracteres POSIX são suportados.
+- `[!...]` similar ao anterior, porém negada, expande para qualquer um caractere exceto o da lista
+- `\` escapa o caractere que sucede a barra
+
+> Importante: A expansão de curinga não ocorre se o padrão for entre aspas simples: `'*'.txt`
+
+Um outro nome para expansão de curingas é globbing.
+
+Além da `glob` há também a `extglob` que por padrão é desativada em scripts mas ativa no prompt:
+
+- `?(PADRAO)` expande para zero ou uma única ocorrência de `PADRAO`
+- `*(PADRAO)` expande para zero ou mais ocorrências de `PADRAO`
+- `+(PADRAO)` expande para uma ou mais ocorrências de `PADRAO`
+- `@(PADRAO)` expande para uma ocorrência apenas de `PADRAO`
+- `!(PADRAO)` expande para qualquer coisa exceto `PADRAO`; negação de `PADRAO`
+
+O padrão `PADRAO` pode ser uma lista de padrões separados por `|`.
+
+Assim como no `glob` as classes de caracteres POSIX são suportadas.
+
+Outro mecanismo importante na expansão de parâmetros e variáveis é o da *quebra de palavras*:
+
+O shell quando faz a expansão utiliza o caractere em `$IFS` para determinar as palavras ou termos gerados. Por padrão é o branco, que é definido como `IFS=$' \t\n'`, porém é totalmente modificável no shell.
+
+```bash
+# define manualmente os parâmetros do shell
+set entrada=/usr/share/docs/file.txt saida=/usr/share/docs/file.pdf
+# coleta os argumentos no formato key=value
+for arg in "$@"; do
+    # IFS é o caractere =, dessa forma $arg é expandido para tokens separados por =
+    IFS='=' read -r key value <<< "$arg"
+    echo "Chave: $key; Valor: $value"
+done
+```
 
 #### Expansão de chaves
 
@@ -1667,7 +1705,7 @@ Outros usos são:
 
 - `${var:-TEXTO}` se `$var` for nula ou limpa (via `unset`) `TEXTO` é expandido para `stdout` mas não atribui a ela, senão usa o valor dela
 
-- `${var:=TEXTO}` o mesmo acima, porém atribue a `$var` caso seja nula ou limpa senão usa o valor dela; é o valor padrão
+- `${var:=TEXTO}` o mesmo acima, porém atribue a `$var` caso seja nula ou limpa senão usa o valor dela
 
 - `${var:?TEXTO}` se `$var` for nula ou limpa `TEXTO` é expandido para a `stderr` com uma mensagem de erro, senão usa o valor dela
 
@@ -1691,7 +1729,7 @@ Outros usos são:
 
 - `${var%%TEXTO}` o mesmo acim, porém busca a maior substring
 
-- `${var/PADRAO/SUBST}` expande `PADRAO` e o busca em `$var` substituindo na primeira ocorrência por `SUBST`; O formato de busca suportado aceita o padrão `glob`, como `*`, (qualquer caractere) `?` (um caractere), `[...]` (lista) e o padrão `extglob` como `?(PADRAO)` (zero ou uma ocorrência de `PADRAO`), `*(PADRAO)` (zero ou mais ocorrências de `PADRAO`), `+(PADRAO)` (uma ou mais ocorrências de `PADRAO`), `@(PADRAO)` (uma única ocorrência de `PADRAO`), `!(PADRAO)` (qualquer coisa exceto `PADRAO`); `extglob` é ativo no shell mas não em script por padrão
+- `${var/PADRAO/SUBST}` expande `PADRAO` e o busca em `$var` substituindo na primeira ocorrência por `SUBST`
 
 - `${var//PADRAO/SUBST}` o mesmo acima porém substitue em todas as ocorrências
 
@@ -1745,19 +1783,15 @@ declare -i a='2 * 6 - 3'
 echo $a
 ```
 
-#### Quebra de palavras
+#### Substituição de processos
 
-O shell quando faz a expansão utiliza o caractere em `$IFS` para determinar as palavras ou termos gerados. Por padrão é o branco, que é definido como `IFS=$' \t\n'`.
+A sintaxe `<(LISTA)` e `>(LISTA)` criam respectivamente arquivos temporários nas quais contém o conteúdo da saída de `LISTA`. O primeiro é um arquivo aberto para leitura e o segundo é um arquivo aberto para escrita. Não pode haver espaços entre `<` ou `>` e `(`.
+
+Os comandos em `LISTA` são executados em subshell
 
 ```bash
-# define manualmente os parâmetros do shell
-set entrada=/usr/share/docs/file.txt saida=/usr/share/docs/file.pdf
-# coleta os argumentos no formato key=value
-for arg in "$@"; do
-    # IFS é o caractere =, dessa forma $arg é expandido para tokens separados por =
-    IFS='=' read -r key value <<< "$arg"
-    echo "Chave: $key; Valor: $value"
-done
+# cria os arquivos temporários na quais seus conteúdos são a saída de `seq 10` e `seq 20` respectivamente
+diff <(seq 10) <(seq 20)
 ```
 
 ### Redireções
@@ -1824,7 +1858,7 @@ Os descritores de arquivos estão em `/dev/fd`.
 
     `[n]>& ARQUIVO`
 
-    **Dica rápida:** Se `n` não for informado subentende `1`
+    **dICa rápida:** Se `n` não for informado subentende `1`
 
     **Dica rápida:** ARQUIVO pode ser avaliado como `-` ou como algum caminho válido, porém se for avaliado como um `-` ele fecha o descritor `n`
 
