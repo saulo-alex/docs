@@ -1788,8 +1788,8 @@ A sintaxe `<(LISTA)` e `>(LISTA)` criam respectivamente arquivos temporários na
 Os comandos em `LISTA` são executados em subshell
 
 ```bash
-# cria os arquivos temporários na quais seus conteúdos são a saída de `seq 10` e `seq 20` respectivamente
-diff <(seq 10) <(seq 20) >(echo)
+# cria os arquivos temporários na quais seus conteúdos são a saída de `seq 10` e `seq 20` respectivamente e ainda joga a saída para outro comando temporário que nunca irei saber o nome e após é descartado
+diff <(seq 10) <(seq 20) > >(echo -n)
 ```
 
 ### Redireções
