@@ -1792,6 +1792,49 @@ Os comandos em `LISTA` são executados em subshell
 diff <(seq 10) <(seq 20) > >(echo -n)
 ```
 
+### Comandos internos
+
+- `:` faz nada mas serve para expandir o argumento passado
+- `.` ou `source` lê o arquivo no shell atual
+- `alias` define apelidos para comandos (opcionalmente com seus argumentos)
+- `bind` lista e define atalhos para GNU Readline, que é ativo por ex. via `C-e` (início da linha) ou `C-a` (limpa a tela)
+- `break`
+- `cd`
+- `continue`
+- `command` executa um comando com seus argumentos ignorando qualquer função que possua o mesmo nome
+- `declare` declara variáveis e seus atributos
+- `echo`
+- `enable` habilita ou desabilita (via `-n`) algum comando interno, permitindo usar comandos externos
+- `eval` avalia uma string como um comando shell normal
+- `exec` substitui a imagem do processo atual do shell por um outro comando e não retorna dele
+- `exit`
+- `export` faz variáveis ou funções declaradas no shell atual serem passadas para o ambiente de algum subshell; observe que com isso variáveis no shell atual não são herdadas automaticamente por subshell, a menos que sejam exportadas! Para listar todas variáveis exportadas `export -p` ou simplemente `export`
+- `getopts` usado por scripts para ajudar no parseamento de argumentos
+- `help` mostra uma ajuda do comando interno; com `-s` mostra uma breve linha informando seus argumentos
+- `hash`
+- `let`
+- `local`
+- `logout`
+- `mapfile`
+- `printf`
+- `pwd`
+- `readonly`
+- `read`
+- `readarray`
+- `return`
+- `shift`
+- `set`
+- `shopt`
+- `type`
+- `typeset`
+- `test` ou `[...]`
+- `times`
+- `trap`
+- `unmask`
+- `unset`
+- `ulimit`
+- `unalias`
+
 ### Redireções
 
 Segue o formato básico `descritor[[&]<|>]caminho-para-arquivo`.
