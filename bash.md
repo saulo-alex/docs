@@ -1763,9 +1763,7 @@ echo `ls -1 *.txt`
 
 #### Expansão aritmética
 
-Expande para o valor da resolução aritmética seguindo as regras de `((expr))`, ou usando `let` ou mesmo usando `declare -i`.
-
-A sintaxe padrão é `$((expr))`
+Expande para o valor calculado da expressão aritmética dada por `$((expr))`, ou via`let var={expr}` ou mesmo usando `declare -i var={expr}`.
 
 Exemplos:
 
@@ -1791,7 +1789,7 @@ Os comandos em `LISTA` são executados em subshell
 
 ```bash
 # cria os arquivos temporários na quais seus conteúdos são a saída de `seq 10` e `seq 20` respectivamente
-diff <(seq 10) <(seq 20)
+diff <(seq 10) <(seq 20) >(echo)
 ```
 
 ### Redireções
