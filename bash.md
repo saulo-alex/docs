@@ -1590,11 +1590,13 @@ Algumas opções:
 Para declarar há duas formas:
 
 `var=(a b c)` (tradicional, indexada)
+
 `var=([key1]=value1 [key2]=value2 [key3]=value3 [keyN]=valueN)` (tradicional, associativo)
 
 ou
 
 `declare -a var=(value1 value2 value3 valueN)` (moderna, indexada)
+
 `declare -A var=([key1]=value1 [key2]=value2 [key3]=value3 [keyN]=valueN)` (moderna, associativo)
 
 Além das formas acima é possível atribuir em qualquer posição qualquer que seja a variável que automaticamente se transformará em array:
