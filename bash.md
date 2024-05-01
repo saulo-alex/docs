@@ -1639,7 +1639,7 @@ Em todas expansões é possível utilizar curingas (da lib `glob`):
 
 > Importante: A expansão de curinga não ocorre se o padrão for entre aspas simples: `'*'.txt`
 
-Um outro nome para expansão de curingas é globbing.
+Um outro nome para expansão de curingas é globbing, e sempre expande para nome de arquivos.
 
 Além da `glob` há também a `extglob` que por padrão é desativada em scripts mas ativa no prompt:
 
