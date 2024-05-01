@@ -540,9 +540,9 @@ Realiza um dump dos bytes do arquivo em várias bases, que por padrão é octal
 - `-A` define a base numérica dos endereços: `d` (decimal), `x` (hexadecimal), `o` (octal) ou `n` (não exibe ela!)
 - `-t` define a representação de cada byte: `a` (caracteres como apresentados no ASCII), `b` (octal), `c` (como `a`, `\n`, `\t`, `ã`), `f` (números reais), `x` (hexadecimal)
 
-> ✅ É possível definir a largura do byte manualmente usando um sufixo no valor de `-t`, como `-tx1` (hexa de 1 byte)
+> É possível definir a largura do byte manualmente usando um sufixo no valor de `-t`, como `-tx1` (hexa de 1 byte)
 
-> ✅ Qualquer tipo com sufixo, último de todos, `z` permite que seja exibido na coluna mais a direita a representação ASCII da linha, como em `-tx1z`
+> Qualquer tipo com sufixo, último de todos, `z` permite que seja exibido na coluna mais a direita a representação ASCII da linha, como em `-tx1z`
 
 - `-j` define o offset inicial, ou seja, quantos bytes serão deslocados antes de exibir o *dump*
 - `-N` define a quantidade máxima de bytes a serem lidos
@@ -1703,6 +1703,8 @@ O segundo uso é para proteger de mal-interpretação do nome da variável: `ech
 
 Outros usos são:
 
+- `${var[@]}` se `$var` for um array, expande para todos os valores separados por espaço; caso a indexação seja por `*` e a expansão seja entre aspas duplas separa pelo caractere em `$IFS`
+
 - `${var:-TEXTO}` se `$var` for nula ou limpa (via `unset`) `TEXTO` é expandido para `stdout` mas não atribui a ela, senão usa o valor dela
 
 - `${var:=TEXTO}` o mesmo acima, porém atribue a `$var` caso seja nula ou limpa senão usa o valor dela
@@ -1794,7 +1796,7 @@ diff <(seq 10) <(seq 20) > >(echo -n)
 
 ### Comandos internos
 
-- `:` faz nada mas serve para expandir o argumento passado
+- `:` faz nada mas serve para expandir o seu argumento
 - `.` ou `source` lê o arquivo no shell atual
 - `alias` define apelidos para comandos (opcionalmente com seus argumentos)
 - `bind` lista e define atalhos para GNU Readline, que é ativo por ex. via `C-e` (início da linha) ou `C-a` (limpa a tela)
@@ -1811,29 +1813,27 @@ diff <(seq 10) <(seq 20) > >(echo -n)
 - `export` faz variáveis ou funções declaradas no shell atual serem passadas para o ambiente de algum subshell; observe que com isso variáveis no shell atual não são herdadas automaticamente por subshell, a menos que sejam exportadas! Para listar todas variáveis exportadas `export -p` ou simplemente `export`
 - `getopts` usado por scripts para ajudar no parseamento de argumentos
 - `help` mostra uma ajuda do comando interno; com `-s` mostra uma breve linha informando seus argumentos
-- `hash`
-- `let`
-- `local`
-- `logout`
-- `mapfile`
-- `printf`
-- `pwd`
-- `readonly`
-- `read`
-- `readarray`
-- `return`
-- `shift`
-- `set`
-- `shopt`
-- `type`
-- `typeset`
-- `test` ou `[...]`
-- `times`
-- `trap`
-- `unmask`
-- `unset`
-- `ulimit`
-- `unalias`
+- `let` permite calcular expressões aritméticas de forma simples
+- `local` define variáveis locais (dentro de funções)
+- `logout` sai da sessão atual do shell e retorna ao pai
+- `mapfile` lê e armazena em array com apenas esse comando todas as linhas de um arquivo, uma linha por posição; ex. armazenando em `$lines` as linhas de `arq`: `mapfile -t lines <arq`
+- `printf` saída formatada
+- `pwd` qual meu diretório atual?
+- `readonly` torna variáveis constantes; ex.: `readonly a=10`
+- `read` lê da entrada para variáveis
+- `readarray` sinônimo de `mapfile`
+- `return` retorna um número (código de retorno)
+- `shift` retorna o primeiro dos parâmetros e faz shift-left neles
+- `set` comando com muitas funcionalidades, entre elas definir parâmetros arbitrariamente e alterar opções e comportamentos do shell
+- `shopt` ativa ou desativa extensões e bibliotecas no shell; `shopt -s {lib}` habilita a biblioteca; `shopt {lib}` testa se está ativa ou não; `shopt -u {lib}` desabilita a biblioteca
+- `type` super útil, serve para dizer o que o comando de fato é: o caminho dele, se é um alias, se é um comando interno etc.
+- `test` ou `[...]` executa expressões condicionais
+- `times` mede o tempo que o comando informado levou para executar
+- `trap` conecta um comando que será executado quando o shell receber um sinal arbitrário
+- `unmask` define o modo de permissão padrão para novos arquivos e diretórios
+- `unset` limpa variáveis
+- `ulimit` define limites para processos iniciados pelo shell
+- `unalias` remove apelidos de comandos
 
 ### Redireções
 
@@ -1899,7 +1899,7 @@ Os descritores de arquivos estão em `/dev/fd`.
 
     `[n]>& ARQUIVO`
 
-    **dICa rápida:** Se `n` não for informado subentende `1`
+    **Dica rápida:** Se `n` não for informado subentende `1`
 
     **Dica rápida:** ARQUIVO pode ser avaliado como `-` ou como algum caminho válido, porém se for avaliado como um `-` ele fecha o descritor `n`
 
@@ -2186,4 +2186,30 @@ ls 2>&/dev/null
 - `a, b`
 
     Operador vírgula
+
+### Funções
+
+As duas sintaxes são:
+
+`NOMEFUNC () COMANDO-COMPOSTO [REDIRECOES]`
+
+ou
+
+`function NOMEFUNC [()] COMANDO-COMPOSTO [REDIRECOES]`
+
+É recomendado utilizar chaves no corpo `{ COMANDO-COMPOSTO }` quando utilizado o `function` e não informado os parênteses `function NOMEFUNC { ... }`
+
+O valor de retorno da função é dado ou por `return STATUS` (onde `STATUS` deve ser um inteiro) ou por qualquer comando que deve ser executado por último no corpo da função, sendo o valor de retorno deste o valor dela
+
+Variáveis locais dentro da função são definidas utilizando `local {var}={value}` ou `declare {var}={value}`
+
+Como visto no comando `declare`, é possível visualizar funções declaradas no ambiente via `declare -f` ou `declare -f NOME-FUNC`
+
+Funções podem ser recursivas
+
+Relembrando:
+
+- `$0` nome da função
+- `$1`, `$2`, ..., `$N` argumentos posicionais
+- `${#@}` quantidade de argumentos passados
 
