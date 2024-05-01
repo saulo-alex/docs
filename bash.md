@@ -1591,8 +1591,6 @@ Para declarar há duas formas:
 
 `var=(a b c)` (tradicional, indexada)
 
-`var=([key1]=value1 [key2]=value2 [key3]=value3 [keyN]=valueN)` (tradicional, associativo)
-
 ou
 
 `declare -a var=(value1 value2 value3 valueN)` (moderna, indexada)
