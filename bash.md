@@ -1583,6 +1583,26 @@ Algumas opções:
 - `-i` define um valor inteiro; toda atribuição a ela será tratada como expressão aritmética
 - `-x` define a variável e em seguida exporta
 
+#### Arrays
+
+É possível definir tanto arrays indexados como arrays associativos
+
+Para declarar há duas formas:
+
+`var=(a b c)` (tradicional, indexada)
+`var=([key1]=value1 [key2]=value2 [key3]=value3 [keyN]=valueN)` (tradicional, associativo)
+
+ou
+
+`declare -a var=(value1 value2 value3 valueN)` (moderna, indexada)
+`declare -A var=([key1]=value1 [key2]=value2 [key3]=value3 [keyN]=valueN)` (moderna, associativo)
+
+Além das formas acima é possível atribuir em qualquer posição qualquer que seja a variável que automaticamente se transformará em array:
+
+`a[100]=10` `a` vira um array de 101 posições
+
+> Dica: Em qualquer forma indexada também é possível atribuir índices manualmente, como no array associativo, na verdade a diferença entre eles é simplesmente que o associativo tem índices do tipo string e no indexado é inteiro.
+
 ```bash
 declare -r a="constante"
 # erro
@@ -1833,7 +1853,7 @@ diff <(seq 10) <(seq 20) > >(echo -n)
 - `unmask` define o modo de permissão padrão para novos arquivos e diretórios
 - `unset` limpa variáveis
 - `ulimit` define limites para processos iniciados pelo shell
-- `unalias` remove apelidos de comandos
+- `unalias` remove apelidos
 
 ### Redireções
 
