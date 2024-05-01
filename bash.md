@@ -1597,9 +1597,11 @@ ou
 
 `declare -A var=([key1]=value1 [key2]=value2 [key3]=value3 [keyN]=valueN)` (moderna, associativo)
 
-Além das formas acima é possível atribuir em qualquer posição qualquer que seja a variável que automaticamente se transformará em array:
+Além das formas acima é possível atribuir em qualquer posição numérica qualquer que seja a variável que automaticamente se transformará em array indexado:
 
 `a[100]=10` `a` vira um array de 101 posições
+
+Para arrays associativos isso não é valido!
 
 > Dica: Em qualquer forma indexada também é possível atribuir índices manualmente, como no array associativo, na verdade a diferença entre eles é simplesmente que o associativo tem índices do tipo string e no indexado é inteiro.
 
