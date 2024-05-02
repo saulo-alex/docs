@@ -908,6 +908,19 @@ São usadas como argumentos do `--sort`, `-o` ou `-O` para selecionar as colunas
 | wname | WCHAN |
 | wops | WOPS |
 
+### Exemplos:
+
+```bash
+# exibe todos os processos do bash em ordem decrescente da memória paginada
+ps --sort=-sz -Fp`pidof bash`
+# todos os processos
+ps -eF
+# mostra todos os processos gulosos do chrome em ordem com algumas formatações de saída
+ps --sort=-%mem -os:4=Estado,pid,ppid,ucmd:8=Exec,cmd:170,%mem,%cpu -p`pidof chrome`
+# lista os processos que tem o termo bash na linha de comando
+ps -FCbash
+```
+
 ## du
 
 Estima o uso de espaço do diretório (aparentemente o nome vem de *disk usage*)
