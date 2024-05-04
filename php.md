@@ -70,12 +70,54 @@ Desestruturação de array usando `[]` é feita posição por posição, não se
 ```php
 # $ar tem 5 posições
 $ar = ['a', 'b', 'c', 'd', 'e'];
+
 # captura as 3 primeiras descartando o resto
 [$a, $b, $c] = $ar;
+
 # captura as duas primeiras e descarta a terceira e quarta
 [$a, $b, , , $c] = $ar;
+
 # $ar agora é associativo
 $ar = ['apple' => 'macosx', 'microsoft' => 'windows', 'GNU' => 'Linux'];
-# desestruturando também!
+
+# é possível desestruturar também e em qualquer ordem de seleção!
 ['windows' => $win, 'apple' => $apple, 'GNU' => $gnu] = $ar;
+
+# swap se torna simples!
+[$a, $b] = [$b, $a];
 ```
+
+Para remover posições de um array faça como qualquer outra variável: `unset($array[index])`
+
+É possível também desempacotar arrays (*array unpacking*) em outros arrays usando `...`:
+
+```php
+$ar1 = [1, 2, 3, 4, 5];
+$ar2 = [10, 100];
+
+function f() { return ['ko', 'ok']; }
+
+# $ar3 recebe o unpacking de $ar1
+$ar3 = [...$ar1, 6, 7];
+
+# múltiplos unpackings (incluindo de funções)
+$ar4 = [0, ...$ar3, ...$ar2, ...f()];
+```
+
+Como quase todos os tipos, arrays são atribuídos sempre por cópia, se quiser que seja por referência use `&`!
+
+```php
+$ar1 = [1, 2];
+
+# cópia dos elementos
+$ar2 = $ar1;
+
+# referência, não há cópia; $ar3 se torna um apelido para $ar1
+$ar3 = &$ar1;
+$ar3[0] = 'One';
+
+# ['One', 2];
+var_dump($ar1);
+```
+
+
