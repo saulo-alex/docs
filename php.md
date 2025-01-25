@@ -120,4 +120,31 @@ $ar3[0] = 'One';
 var_dump($ar1);
 ```
 
+### Strings
 
+Além do básico com `'Hello World'` (sem interpolação) e `"Hello World"` (com interpolação), há também o `heredoc` e o `nowdoc`:
+
+```php
+# heredoc interpola e não utiliza aspas simples no delimitador mas opcionalmente pode usar aspas duplas!
+$lang = 'PHP';
+$body = <<<FIM
+<body>
+    <h1>Uma página inútil</h1>
+    <p>Hello World from $lang</p>
+</body>
+FIM;
+
+# nowdoc utiliza aspas no delimitador e não pode interpolar
+$body = <<<'FIM'
+<body>
+    <h1>Uma página inútil</h1>
+    <p>Hello World from HTML</p>
+</body>
+FIM;
+```
+
+Uma string em PHP é sempre tratada como sequência de bytes simples, isso significa que não há suporte nativo ao Unicode
+
+Uma string na verdade é um array de bytes com um inteiro associado indicando seu tamanho
+
+Uma função quando é *binary safe* indica que ela pode tratar strings como uma cadeia crua de bytes não fazendo presupostos do conteúdo
