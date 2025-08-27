@@ -44,27 +44,31 @@ Ai = ( Is / Ie ) ^ 2
 
 Rescrevendo em bel, deve-se considerar esse quadrado:
 
-Av_bel = log ( V_s / V_e ) ^ 2
+Av_bel = log ( Vs / Ve ) ^ 2
 
 ou
 
-Ai_bel = log ( I_s / I_e ) ^ 2
+Ai_bel = log ( Is / Ie ) ^ 2
 
 Na aritmética dos logaritmos pode-se abaixar o quadrado multiplicando:
 
-Av_bel = 2 * log ( V_s / V_e )
+Av_bel = 2 * log ( Vs / Ve )
 
 ou
 
-Ai_bel = 2 * log ( I_s / I_e )
+Ai_bel = 2 * log ( Is / Ie )
 
 E, em decibéis:
 
-Av_dB = 10 * 2 * log ( V_s / V_e ) = 20 * log ( V_s / V_e )
+Ap_dB = 10 * log ( Ps / Pe ), para potência!
+
+E para tensão e corrente:
+
+Av_dB = 10 * 2 * log ( Vs / Ve ) = 20 * log ( Vs / Ve )
 
 ou
 
-Ai_dB = 10 * 2 * log ( I_s / I_e ) = 20 * log ( I_s / I_e )
+Ai_dB = 10 * 2 * log ( Is / Ie ) = 20 * log ( Is / Ie )
 
 Outra aplicação nesses cálculos é do valor em bel ou dB, encontrar o valor absoluto, em potência, tensão ou corrente:
 
@@ -80,8 +84,12 @@ Ai = 10 ^ ( Ai_bel / 20 )
 
 Por curiosidade, um ganho unitário é representado em bel (também em dB) por 0 e não 1, e agora é óbvio isso.
 
+Dobrar a potência equivale a aumentar em +3dB.
+
+Dobrar a tensão ou corrente, equivale a aumentar em +6dB (o dobro por causa do quadrado que vira multiplicador).
+
 Quando dispostos em cascata etapas amplificadoras ou atenuadoras, há algumas considerações:
 
 Se os valores são absolutos o resultado é o produto de todos eles: A1 = 10, A2 = 5 então A = A1 * A2 = 10 * 5 = 50
 
-Se os valores são logarítmicos o resultado é a soma deles. Se A1 = 20dB, A2 = 5dB então A = 20dB + 5dB = 25dB.
+Se os valores são relativos o resultado é a soma deles. Se A1 = 20dB, A2 = 5dB então A = 20dB + 5dB = 25dB.
