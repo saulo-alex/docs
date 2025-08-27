@@ -34,7 +34,6 @@ ou
 
 P = R x I^2
 
-
 Assim, no cálculo em valor absoluto, usa-se:
 
 Av = ( Vs / Ve ) ^ 2
@@ -78,3 +77,5 @@ Av = 10 ^ ( Av_bel / 20 )
 e
 
 Ai = 10 ^ ( Ai_bel / 20 )
+
+Por curiosidade, um ganho unitário é representado em bel (também em dB) por 0 e não 1, e agora é óbvio isso.
