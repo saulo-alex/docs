@@ -79,3 +79,9 @@ e
 Ai = 10 ^ ( Ai_bel / 20 )
 
 Por curiosidade, um ganho unitário é representado em bel (também em dB) por 0 e não 1, e agora é óbvio isso.
+
+Quando dispostos em cascata etapas amplificadoras ou atenuadoras, há algumas considerações:
+
+Se os valores são absolutos o resultado é o produto de todos eles: A1 = 10, A2 = 5 então A = A1 * A2 = 10 * 5 = 50
+
+Se os valores são logarítmicos o resultado é a soma deles. Se A1 = 20dB, A2 = 5dB então A = 20dB + 5dB = 25dB.
