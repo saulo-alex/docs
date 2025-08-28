@@ -14,7 +14,7 @@ Sabe-se que energia não se cria nem se destroi (pela lei da conservação de en
 
 O ganho de potência (ou perda) de um amplificador é sempre não-unitário: Ap = Ps / Pe. (Onde: Ps e Pe são respectivamente, potências de saída e de entrada)
 
-O bel é uma unidade logarítimica que descreve o ganho ou a perda (de potência, a priori) de maneira mais natural, já que sinais sonoros na audição humana são perceptíveis de forma logarítimica.
+O bel é uma unidade logarítimica que descreve o ganho ou a perda (de potência, a priori) de maneira mais natural, já que sinais sonoros na audição humana são perceptíveis de forma logarítimica (não-linear).
 
 Por curiosidade, o bel foi inventado pelo escoçês Grahan Bell na década de 1910 para descrever a atenuação do sinal telefônico em redes de telefonia de longas distâncias.
 
