@@ -93,3 +93,20 @@ Quando dispostos em cascata etapas amplificadoras ou atenuadoras, há algumas co
 Se os valores são absolutos o resultado é o produto de todos eles: A1 = 10, A2 = 5 então A = A1 * A2 = 10 * 5 = 50
 
 Se os valores são relativos o resultado é a soma deles. Se A1 = 20dB, A2 = 5dB então A = 20dB + 5dB = 25dB.
+
+## Diodos
+
+Parâmetros importantes encontrados nos datasheets:
+
+VF: queda de tensão direta nominal
+VR (ou VDC): tensão máxima DC reversa; normalmente igual ao VRRM
+IF(AV): corrente média direta (corrente nominal)
+VRRM: tensão repetitiva reversa máxima (em modo retificador, pulsos desse valor são suportados) - 1000V para 1N4007
+IFSM: corrente de surto máxima - normalmente na ordem de 30A, suportando por alguns ms
+IR: corrente máxima suportada no modo reverso, quando a tensão é VR
+
+Circuitos:
+
+Meia-onda:
+
+[!Circuito meia onda com um diodo](meia-onda.jpg)

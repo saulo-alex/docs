@@ -95,6 +95,7 @@ R1 1 2 {ResistorA}
 R2 2 0 {ResistorB}
 .control
     op
+    run
     echo Simulando tudo!
     print I(V1) V(1,2), V(2), @R1[i], @R2[temp], @R2[p]
     probe I(R2)
