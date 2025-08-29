@@ -1,0 +1,8 @@
+Circuito RC com fonte senoidal
+V1 in 0 SIN(0 1 1k)     ; Fonte senoidal de 1V, 1kHz
+R1 in out 1k            ; Resistor de 1k ohm
+C1 out 0 1u             ; Capacitor de 1 microfarad
+
+.tran 0.1ms 5ms         ; Simulação transiente de 0 a 5ms com passo de 0.1ms
+.plot tran V(out)       ; Plota a tensão no nó 'out'
+.end

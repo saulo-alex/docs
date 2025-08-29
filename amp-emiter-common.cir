@@ -1,0 +1,10 @@
+Circuito Emissor Comum com BJT
+vbb 1 0 dc 3
+rbb 2 1 3K
+q1  3 2 0 modnpn
+rcc 4 3 100
+vcc 4 0 dc 6
+.model modnpn npn
+.dc vbb 0 3 0.1
+.plot dc v(2) v(3)
+.end

@@ -1,0 +1,15 @@
+Detetor de Pico com Diodo
+
+.model diodo d
+
+V1 1 0 sin(0 12 60)
+R1 1 2 1K
+D1 2 3 diodo
+C1 3 0 1u ic=0
+
+.tran 50u 100m
+.control
+    run
+    plot v(1),v(3)
+.endc
+.end

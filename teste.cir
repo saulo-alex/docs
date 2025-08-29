@@ -1,0 +1,18 @@
+Divisor de tensão
+
+.options noacct noinit nomod nopage
+.param FonteGeral = 500mV
+.param ResistorA = 1K
+.param ResistorB = 1K
+
+V1 1 0 dc {FonteGeral}
+R1 1 2 {ResistorA}
+R2 2 0 {ResistorB}
+.control
+    op
+    echo Simulando tudo!
+    print I(V1) V(1,2), V(2), @R1[i], @R2[temp], @R2[p]
+    echo Fim!
+    exit
+.endc
+.end

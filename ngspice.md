@@ -17,6 +17,13 @@ Para ignorar condições iniciais automáticas, quaisquer que seja na simulaçã
 
 .tran 0.1ms 10ms uic
 
+## Fontes independentes
+
+VXXXXXXX N+ N- [[DC] DC/TRAN VALUE] [AC [ACMAG [ACPHASE]]] [DISTOF1 [F1MAG [F1PHASE]]] [DISTOF2 [F2MAG [F2PHASE]]]
+IYYYYYYY N+ N- [[DC] DC/TRAN VALUE] [AC [ACMAG [ACPHASE]]] [DISTOF1 [F1MAG [F1PHASE]]] [DISTOF2 [F2MAG [F2PHASE]]]
+
+onde: ACMAG é o valor em RMS da tensão AC
+
 ## Tipos de simulação
 
 - Estática
@@ -105,3 +112,53 @@ R2 2 0 {ResistorB}
 .end
 ```
 
+## Fontes de tensão
+
+### Senoidal
+
+SIN(VO VA FREQ TD=0 THETA=0 PHASE=0)
+
+onde: VO - nível DC (ou offset DC)
+      VA - amplitude em V ou A
+      FREQ - frequência em Hz
+      TD - delay
+      THETA - fator de amortecimento (diminue a amplitude ao longo do tempo)
+      PHASE - fase
+
+## Formatos das análises
+
+Transiente:
+
+TRAN TSTEP TSTOP [TSTART=0 [TMAX]] [UIC]
+
+onde: TSTEP - passo de tempo
+      TSTOP - tempo limite
+      TSTART - tempo inicial (calcula mas só mostra após esse tempo)
+      TMAX - útil para garantir um tempo de passo mínimo (desconsidere por hora)
+      UIC - palavra-chave; usa condições iniciais dos componentes
+
+Varredura DC:
+
+DC SRCNAM VSTART VSTOP VINCR [SRC2 START2 STOP2 INCR2]
+
+onde: SRCNAM - a fonte indepentente de tensão ou corrente
+      VSTART - a tensão ou corrente inicial
+      VSTOP  - a tensão ou corrente final
+      VINCR  - o passo de tensão ou corrente
+      SRC2, START2, STOP2, INCR2   -  os mesmos acima, porém quando informados cada valor da primeira é combinada com a segunda
+
+Varredura AC:
+
+AC DEC ND FSTART FSTOP
+AC OCT NO FSTART FSTOP
+AC LIN NP FSTART FSTOP
+
+Pode ser de décadas, oitavas ou linear.
+
+Na década há a variação logarítimica de potências de 10 (escala não-linear)
+Na oitava há a variação logarítimica de potências de 2 (escala não-linear)
+Na linear há a variação em passos lineares e constantes (escala linear)
+
+onde: ND,NO,NP - número de pontos ou passos a cada décadas, oitavas ou pontos, respectivamente
+      FSTART - frequência inicial
+      FSTOP - frequência final

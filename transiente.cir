@@ -1,0 +1,12 @@
+Carga do capacitor
+
+V1 1 0 DC 5
+R1 1 2 1K
+C1 2 0 100u ic=0
+
+.tran 5u 600ms uic
+.control
+    run
+    plot V(1),V(2)
+.endc
+.end

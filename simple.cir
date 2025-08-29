@@ -1,0 +1,9 @@
+Meu primeiro circuito
+vcc 1 0 dc 10
+r00 1 0 5
+* Comentários
+.control
+    op
+    print v(1) i(vcc)
+.endc
+.end

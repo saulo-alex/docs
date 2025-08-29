@@ -1,0 +1,13 @@
+Filtro RC com fonte AC
+
+V1 in 0 AC 1
+R1 in out 1k
+C1 out 0 1u
+
+.ac dec 100 10 100k
+.control
+    run
+    plot V(out)
+    measure ac F3db WHEN db(V(out))=db(V(out)[0])-3
+.endc
+.end
